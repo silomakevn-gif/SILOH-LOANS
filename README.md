@@ -4,39 +4,38 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LEWA MAGIL FORUM</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-:root{--navy:#1c130d;--indigo:#6b3410;--violet:#8b4513;--teal:#5c3317;--bg:#f6f0e8;--card:#fff;--text:#241a14;--green:#15803d;--red:#b91c1c;--orange:#a0522d;--muted:#7a6a5c;--whatsapp:#20b858}
+:root{--navy:#0f172a;--indigo:#0f766e;--indigo-dark:#0b5852;--bg:#eef3f4;--card:#fff;--text:#1e293b;--green:#15803d;--red:#dc2626;--orange:#d97706;--muted:#64748b;--whatsapp:#22c55e;--soft:#e6f4f3;--blue:#2563eb}
 *{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}
-header{background:linear-gradient(135deg,#140d09,#6b3410 55%,#b91c1c);color:#fff;padding:20px;position:sticky;top:0;z-index:10;box-shadow:0 4px 18px #14090433}
+header{background:linear-gradient(135deg,#0b1526,#0f766e 60%,#14b8a6);color:#fff;padding:20px;position:sticky;top:0;z-index:10;box-shadow:0 4px 18px #0f172a33}
 header h1{margin:0;font-size:23px}header p{margin:5px 0 0;opacity:.9}
-nav{display:flex;gap:8px;overflow:auto;padding:10px;background:#fff;border-bottom:1px solid #ddd;position:sticky;top:82px;z-index:9}
-nav button{border:0;background:#f1e7db;color:var(--navy);padding:10px 13px;border-radius:10px;white-space:nowrap;font-weight:700}
-nav button.active{background:linear-gradient(135deg,#6b3410,#b91c1c);color:#fff}
-main{max-width:1250px;margin:auto;padding:16px}.tab{display:none}.tab.active{display:block}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
-.card{background:var(--card);border-radius:15px;padding:16px;box-shadow:0 4px 16px #1c130d12;margin-bottom:14px}
-.stat{font-size:25px;font-weight:800;margin-top:8px}.label{color:var(--muted);font-size:13px;font-weight:600}
+nav{display:flex;gap:8px;overflow:auto;padding:10px;background:#fff;border-bottom:1px solid #dde5e7;position:sticky;top:82px;z-index:9}
+nav button{border:0;background:var(--soft);color:var(--indigo-dark);padding:10px 13px;border-radius:10px;white-space:nowrap;font-weight:700}
+nav button.active{background:linear-gradient(135deg,#0f766e,#0b5852);color:#fff}
+main{max-width:900px;margin:auto;padding:16px}
+.card{background:var(--card);border-radius:15px;padding:16px;box-shadow:0 4px 16px #0f172a12;margin-bottom:14px}
 h2{margin-top:4px}.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 button.primary{background:var(--indigo);color:#fff;border:0;border-radius:9px;padding:10px 14px;font-weight:700;cursor:pointer}
-button.secondary{background:#ece0d3;color:var(--navy);border:0;border-radius:9px;padding:8px 12px;font-weight:700;cursor:pointer}
+button.secondary{background:var(--soft);color:var(--indigo-dark);border:0;border-radius:9px;padding:8px 12px;font-weight:700;cursor:pointer}
 button.danger{background:var(--red);color:#fff;border:0;border-radius:9px;padding:8px 12px;cursor:pointer}
 button.whatsapp{background:var(--whatsapp);color:#fff;border:0;border-radius:9px;padding:8px 12px;font-weight:700;cursor:pointer}
-a.call,button.call{background:var(--teal);color:#fff;border:0;border-radius:9px;padding:8px 12px;font-weight:700;text-decoration:none;display:inline-block;cursor:pointer}
-input,select,textarea{width:100%;padding:10px;border:1px solid #d8c9b8;border-radius:9px;background:#fff}
+a.call,button.call{background:var(--blue);color:#fff;border:0;border-radius:9px;padding:8px 12px;font-weight:700;text-decoration:none;display:inline-block;cursor:pointer}
+input,select,textarea{width:100%;padding:10px;border:1px solid #cfd9db;border-radius:9px;background:#fff}
 textarea{min-height:100px;resize:vertical}.formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
-label{font-size:12px;font-weight:700;color:#5c4a3a}
-.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:680px}th,td{padding:10px;border-bottom:1px solid #e8ddd0;text-align:left;font-size:13px}th{background:var(--navy);color:#fff;position:sticky;top:0}.pill{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:800}.paid{background:#dcfce7;color:#15803d}.pending{background:#fde2e2;color:#b91c1c}
-.small{font-size:12px;color:var(--muted)}.notice{background:#fff8e8;border-left:4px solid var(--orange);padding:12px;border-radius:8px;margin-bottom:12px}
-canvas{max-height:330px}.actions{display:flex;gap:8px;flex-wrap:wrap}
+label{font-size:12px;font-weight:700;color:#3f5254}
+.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:520px}th,td{padding:10px;border-bottom:1px solid #e5ecec;text-align:left;font-size:13px}th{background:var(--navy);color:#fff;position:sticky;top:0}
+.pill{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:800;margin:2px}.paid{background:#dcfce7;color:#15803d}.pending{background:#fee2e2;color:#dc2626}.partial{background:#fef9c3;color:#a16207}
+.small{font-size:12px;color:var(--muted)}
+.threerow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
 footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}
-@media(max-width:600px){main{padding:10px}header{padding:16px}.stat{font-size:22px}}
+@media(max-width:600px){main{padding:10px}header{padding:16px}.threerow{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <header>
 <h1>LEWA MAGIL FORUM</h1>
-<p>Emergency help fund for friends • Balance • Payments • WhatsApp &amp; SMS</p>
+<p>Emergency help fund for friends</p>
 </header>
 <nav id="nav"></nav>
 <main id="app"></main>
@@ -44,50 +43,63 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:12px}
 
 <script>
 const KEY="lewaMagilForumV3";
-const accents=["#6b3410","#b91c1c","#3e2417","#8b4513","#a0522d","#1c130d"];
+const accents=["#0f766e","#2563eb","#d97706","#dc2626","#7c3aed","#0891b2"];
 const defaultData={
  settings:{status:"Active"},
- paymentTypes:[{id:"T1",name:"Emergency Help",amount:0,dueDate:""}],
- rules:[
-  "This fund supports emergency help between friends — contributions can happen any time, not on a fixed monthly schedule.",
-  "Anyone can contribute whenever they are able; there is no fixed required amount unless agreed for a specific need.",
-  "Record the giver's name, amount, date and time whenever possible.",
-  "The current balance should be shared with the group after a contribution so everyone stays informed.",
-  "WhatsApp and phone numbers are used for official communication about the fund.",
-  "Keep contact numbers up to date so notifications reach everyone."
+ paymentTypes:[{id:"T1",name:"Emergency Help",amount:0,dueDate:""},{id:"T2",name:"Augustine's contribution",amount:0,dueDate:""}],
+ members:[
+  ["M001","Micah lee","","Member"],
+  ["M002","Augustine sankale","","Member"],
+  ["M003","Lesirnkit","","Member"],
+  ["M004","Meitamei Justus","","Member"],
+  ["M005","Gideon leperes","","Member"],
+  ["M006","Meshack leshao","","Member"],
+  ["M007","Kevin leyian","","Member"],
+  ["M008","Diof leshamin","","Member"],
+  ["M009","Eliakim lekura","","Member"],
+  ["M010","Collins lekishon","","Member"],
+  ["M011","Morgan","","Member"],
+  ["M012","Milton","","Member"],
+  ["M013","Emmanuel meritei","","Member"],
+  ["M014","Hosea saiguran","","Member"],
+  ["M015","Shadrack meitamei","","Member"],
+  ["M016","Collins meoli","","Member"],
+  ["M017","Brian kosen","","Member"]
  ],
- members:[],
- payments:[]
+ payments:[
+  ["P001","M001","Micah lee",300,"","","","Received","","Augustine's contribution"],
+  ["P002","M002","Augustine sankale",300,"","","","Received","","Augustine's contribution"],
+  ["P003","M003","Lesirnkit",300,"","","","Received","","Augustine's contribution"],
+  ["P004","M004","Meitamei Justus",300,"","","","Received","","Augustine's contribution"],
+  ["P005","M005","Gideon leperes",300,"","","","Received","","Augustine's contribution"],
+  ["P006","M006","Meshack leshao",300,"","","","Received","","Augustine's contribution"],
+  ["P007","M007","Kevin leyian",300,"","","","Received","","Augustine's contribution"],
+  ["P008","M008","Diof leshamin",300,"","","","Received","","Augustine's contribution"],
+  ["P009","M009","Eliakim lekura",300,"","","","Received","","Augustine's contribution"],
+  ["P010","M010","Collins lekishon",300,"","","","Received","","Augustine's contribution"],
+  ["P011","M011","Morgan",300,"","","","Received","","Augustine's contribution"],
+  ["P012","M012","Milton",300,"","","","Received","","Augustine's contribution"],
+  ["P013","M013","Emmanuel meritei",300,"","","","Received","","Augustine's contribution"],
+  ["P014","M014","Hosea saiguran",300,"","","","Received","","Augustine's contribution"],
+  ["P015","M015","Shadrack meitamei",300,"","","","Pending","","Augustine's contribution"],
+  ["P016","M016","Collins meoli",300,"","","","Received","","Augustine's contribution"],
+  ["P017","M017","Brian kosen",300,"","","","Pending","","Augustine's contribution"]
+ ]
 };
 let data=JSON.parse(localStorage.getItem(KEY)||JSON.stringify(defaultData));
 if(!data.paymentTypes||!data.paymentTypes.length)data.paymentTypes=[{id:"T1",name:"Emergency Help",amount:0,dueDate:""}];
-data.paymentTypes.forEach(t=>{if(t.amount===undefined)t.amount=0;if(t.dueDate===undefined)t.dueDate=""});
+data.paymentTypes.forEach(t=>{if(t.amount===undefined)t.amount=0;if(t.dueDate===undefined)t.dueDate="";if(t.closed===undefined)t.closed=false});
 if(!data.settings)data.settings={status:"Active"};
-if(data.settings.lateFineAmount===undefined)data.settings.lateFineAmount=0;
-if(data.settings.lateFineType===undefined)data.settings.lateFineType="fixed";
+if(!data.settings.activeContribution){data.settings.activeContribution=data.paymentTypes[data.paymentTypes.length-1].name}
+data.paymentTypes.forEach(t=>{t.closed=(t.name!==data.settings.activeContribution)});
 data.members.forEach(m=>{if(m[2])m[2]=normalizePhone(m[2])});
-const tabs=["Dashboard","Members","Payments","Reminders","Rules","WhatsApp","Reports","Settings"];
-let active="Dashboard", chart1, chart2, paymentsFilter="All";
-let waTemplate="Hello {NAME}, quick update from LEWA MAGIL FORUM: current balance is {BALANCE}. Thank you for being part of the circle.";
-let reminderTemplate="Hello {NAME}, this is a reminder from LEWA MAGIL FORUM. You currently owe {OWED} for {CATEGORY} (includes {FINE} in late fines if applicable). Status: {STATUS}. Kindly make your contribution when you're able. Current fund balance: {BALANCE}. Thank you!";
+const tabs=["Home","Contributions","Members","Settings"];
+let active="Home", personSearch="";
 
 function save(){localStorage.setItem(KEY,JSON.stringify(data));render()}
 function money(n){return "KSh "+Number(n||0).toLocaleString()}
 function members(){return data.members}
-function parseBulkLine(line){
- line=line.replace(/^\s*\d+[\.\)]?\s+(?=[A-Za-z])/,"");
- let nums=[...line.matchAll(/\d+(\.\d+)?/g)];
- if(!nums.length)return null;
- let last=nums[nums.length-1];
- let amount=Number(last[0]);
- let name=line.slice(0,last.index).trim().replace(/[-=:]+$/,"").trim().replace(/\s{2,}/g," ");
- if(!name)return null;
- return {name,amount};
-}
 function memberPayments(name){return data.payments.filter(p=>p[2]===name)}
-function defaultTypeName(){return data.paymentTypes[0]?data.paymentTypes[0].name:"Emergency Help"}
-function typeAmount(name){let t=data.paymentTypes.find(x=>x.name===name);return t?Number(t.amount||0):0}
-function typeDue(name){let t=data.paymentTypes.find(x=>x.name===name);return t?(t.dueDate||""):""}
 function normalizePhone(raw){
  if(!raw)return "";
  let d=String(raw).replace(/\D/g,"");
@@ -102,42 +114,33 @@ function livePhonePreview(inputId,hintId){
  let v=document.getElementById(inputId).value;
  document.getElementById(hintId).textContent=v.trim()?"Will be saved as: "+formatPhone(v):"Numbers are automatically formatted to start with +254 when saved.";
 }
-function categoryTotals(){
- return data.paymentTypes.map(t=>({name:t.name,total:data.payments.filter(p=>(p[9]||defaultTypeName())===t.name).reduce((a,p)=>a+Number(p[3]),0),count:data.payments.filter(p=>(p[9]||defaultTypeName())===t.name).length}));
+function openContribution(){return data.paymentTypes.find(t=>!t.closed)||data.paymentTypes[data.paymentTypes.length-1]}
+function closedContributions(){return data.paymentTypes.filter(t=>t.closed)}
+function memberContribStatus(name,t){
+ let recs=data.payments.filter(p=>p[2]===name&&(p[9]||t.name)===t.name);
+ let paid=recs.reduce((a,p)=>a+Number(p[3]),0);
+ let amt=Number(t.amount||0);
+ if(amt<=0){
+  if(!recs.length)return {status:"owing",paid:0,amt:0,remaining:0};
+  let hasReceived=recs.some(p=>p[7]!=="Pending");
+  return {status:hasReceived?"paid":"owing",paid,amt:0,remaining:0};
+ }
+ if(paid<=0)return {status:"owing",paid,amt,remaining:amt};
+ if(paid<amt)return {status:"partial",paid,amt,remaining:amt-paid};
+ return {status:"paid",paid,amt,remaining:0};
 }
-function lateFineFor(daysLate){
- if(!daysLate||daysLate<=0)return 0;
- let amt=Number(data.settings.lateFineAmount||0);
- if(!amt)return 0;
- return data.settings.lateFineType==="perday"?amt*daysLate:amt;
-}
-function memberCategoryStats(name){
- return data.paymentTypes.filter(t=>Number(t.amount||0)>0).map(t=>{
-  let paid=data.payments.filter(p=>p[2]===name&&(p[9]||defaultTypeName())===t.name).reduce((a,p)=>a+Number(p[3]),0);
-  let expected=Number(t.amount||0);
-  let balance=Math.max(0,expected-paid);
-  let overdue=false,daysLate=0;
-  if(balance>0&&t.dueDate){let due=new Date(t.dueDate+"T00:00:00"),now=new Date();if(now>due){overdue=true;daysLate=Math.floor((now-due)/86400000)}}
-  let fine=overdue?lateFineFor(daysLate):0;
-  return {type:t.name,expected,paid,balance,overdue,daysLate,fine,dueDate:t.dueDate||""};
+function contributionSummary(t){
+ let pays=data.payments.filter(p=>(p[9]||t.name)===t.name);
+ let collected=pays.reduce((a,p)=>a+Number(p[3]),0);
+ let expectedTotal=Number(t.amount||0)*members().length;
+ let paidNames=[],partialNames=[],oweNames=[];
+ members().forEach(m=>{
+  let st=memberContribStatus(m[1],t);
+  if(st.status==="paid")paidNames.push(m[1]);
+  else if(st.status==="partial")partialNames.push(m[1]+` (${money(st.remaining)} left)`);
+  else oweNames.push(m[1]);
  });
-}
-function memberTotalDue(name){return memberCategoryStats(name).reduce((a,c)=>a+c.balance+c.fine,0)}
-function memberIsLate(name){return memberCategoryStats(name).some(c=>c.overdue)}
-function buildReminderMsg(name){
- let cs=memberCategoryStats(name).filter(c=>c.balance>0);
- let owed=cs.reduce((a,c)=>a+c.balance+c.fine,0);
- let fineTotal=cs.reduce((a,c)=>a+c.fine,0);
- let catList=cs.map(c=>`${c.type}: ${money(c.balance)}${c.overdue?` + ${money(c.fine)} late fine (${c.daysLate}d late)`:""}`).join(", ")||"—";
- let late=cs.some(c=>c.overdue);
- return reminderTemplate.replaceAll("{NAME}",name).replaceAll("{OWED}",money(owed)).replaceAll("{FINE}",money(fineTotal)).replaceAll("{CATEGORY}",catList).replaceAll("{STATUS}",late?"LATE":"Pending").replaceAll("{BALANCE}",money(stats().balance));
-}
-function stats(){
- let balance=data.payments.reduce((a,p)=>a+Number(p[3]),0);
- let received=data.payments.filter(p=>p[7]==="Received").length;
- let pending=data.payments.filter(p=>p[7]==="Pending").length;
- let arrears=members().filter(m=>memberTotalDue(m[1])>0).length;
- return {balance,received,pending,arrears};
+ return {t,name:t.name,amount:Number(t.amount||0),dueDate:t.dueDate||"",collected,expectedTotal,paidNames,partialNames,oweNames,count:pays.length,total:members().length};
 }
 function nav(){
  document.getElementById("nav").innerHTML=tabs.map(t=>`<button class="${t===active?"active":""}" onclick="go('${t}')">${t}</button>`).join("");
@@ -145,75 +148,160 @@ function nav(){
 function go(t){active=t;render();scrollTo(0,0)}
 function render(){
  nav(); let a=document.getElementById("app");
- a.innerHTML=views[active](); bindCharts();
+ let fEl=document.activeElement,fId=fEl&&fEl.id,fSel=fId&&typeof fEl.selectionStart==="number"?fEl.selectionStart:null;
+ a.innerHTML=views[active]();
+ if(fId){let el=document.getElementById(fId);if(el){el.focus();if(fSel!=null&&el.setSelectionRange){try{el.setSelectionRange(fSel,fSel)}catch(e){}}}}
 }
 const views={
-Dashboard:()=>{let s=stats();let sorted=[...data.payments].sort((a,b)=>(b[4]+" "+b[5]).localeCompare(a[4]+" "+a[5]));let cats=categoryTotals();
- return `<div class="section-title"><h2>Fund Dashboard</h2><button class="primary" onclick="exportData()">Export Backup</button></div>
- <div class="grid">
- ${[['Members',members().length],['Current Balance',money(s.balance)],['Received',s.received],['Pending',s.pending],['Members in Arrears',s.arrears],['Contributions Logged',data.payments.length]].map((x,i)=>`<div class="card" style="border-left:6px solid ${accents[i%accents.length]}"><div class="label">${x[0]}</div><div class="stat">${x[1]}</div></div>`).join("")}
+Home:()=>{
+ let t=openContribution();
+ let s=contributionSummary(t);
+ return `<div class="section-title"><h2>Current Contribution</h2><button class="primary" onclick="startNewContribution()">+ Start New Contribution</button></div>
+ <div class="card" style="border-left:6px solid var(--indigo)">
+ <h3 style="margin:0 0 6px">${t.name}</h3>
+ <p class="small">${t.amount?`KSh ${money(t.amount).replace("KSh ","")} per person`:"Custom amount per person"}${t.dueDate?` · due ${t.dueDate}`:""}</p>
+ <p><b>${money(s.collected)}</b> collected${s.expectedTotal?` of ${money(s.expectedTotal)} expected`:""} · <b>${s.paidNames.length}/${s.total}</b> cleared</p>
+ <div class="actions"><button class="secondary" onclick="contributionDetail('${t.id}')">View Full List</button><button class="whatsapp" onclick="remindAllOwing()">Remind those who haven't cleared</button><button class="secondary" onclick="announceCurrent()">📢 Announce</button><button class="secondary" onclick="bulkPaymentForm()">Paste a list</button></div>
  </div>
- <div class="card"><h3>Totals by Category</h3><div class="tablewrap"><table><tr><th>Category</th><th>Total Collected</th><th>Contributions</th></tr>
- ${cats.map(c=>`<tr><td>${c.name}</td><td>${money(c.total)}</td><td>${c.count}</td></tr>`).join("")}</table></div></div>
- <div class="grid"><div class="card"><h3>Payment Status</h3><canvas id="statusChart"></canvas></div><div class="card"><h3>Contributions by Member</h3><canvas id="memberChart"></canvas></div></div>
- <div class="card"><h3>Recent Contributions</h3><div class="tablewrap"><table><tr><th>Name</th><th>Category</th><th>Date</th><th>Time</th><th>Amount</th></tr>
- ${sorted.slice(0,10).map(p=>`<tr><td>${p[2]}</td><td>${p[9]||defaultTypeName()}</td><td>${p[4]}</td><td>${p[5]}</td><td>${money(p[3])}</td></tr>`).join("")||'<tr><td colspan="5">No contributions logged yet.</td></tr>'}</table></div></div>`},
-Members:()=>`<div class="section-title"><h2>Members</h2><div class="actions"><button class="whatsapp" onclick="contactAll()">Contact All</button><button class="primary" onclick="memberForm()">+ Add Member</button></div></div>
- <div class="card"><div class="tablewrap"><table><tr><th>ID</th><th>Name</th><th>WhatsApp</th><th>Total Contributed</th><th>Times</th><th>Status</th><th>Action</th></tr>
- ${members().map(m=>{let ps=memberPayments(m[1]), paid=ps.reduce((a,p)=>a+p[3],0);let due=memberTotalDue(m[1]);let late=memberIsLate(m[1]);
- return `<tr><td>${m[0]}</td><td>${m[1]}</td><td>${m[2]||"—"}</td><td>${money(paid)}</td><td>${ps.length}</td><td>${due>0?`<span class="pill pending">${late?"Late":"Owes"} ${money(due)}</span>`:'<span class="pill paid">Up to date</span>'}</td><td class="actions">
+ <div class="card"><h3 style="margin-top:0">See Every Contribution</h3><p class="small">Augustine's contribution, Meshack's contribution, this one, and any others — each shown separately with its own color, so nothing gets mixed up.</p><button class="primary" onclick="go('Contributions')">Open Contributions List</button></div>`
+},
+Members:()=>{
+ let q=personSearch.trim().toLowerCase();
+ let list=members().filter(m=>!q||m[1].toLowerCase().includes(q));
+ return `<div class="section-title"><h2>Members</h2><button class="primary" onclick="memberForm()">+ Add Member</button></div>
+ <div class="card"><label>Search by name</label><input id="memberSearch" value="${personSearch}" placeholder="Type a name..." oninput="personSearch=this.value;render()"></div>
+ <div class="card"><div class="tablewrap"><table><tr><th>Name</th><th>Number</th><th>Total Contributed (all time)</th><th>Action</th></tr>
+ ${list.map(m=>{let paid=memberPayments(m[1]).reduce((a,p)=>a+Number(p[3]),0);
+ return `<tr><td>${m[1]}</td><td>${m[2]?formatPhone(m[2]):"—"}</td><td>${money(paid)}</td><td class="actions">
  <button class="primary" onclick="editMember('${m[0]}')">Edit</button>
- <button class="secondary" onclick="paymentForm('${m[0]}')">+ Payment</button>
- ${m[2]?`<button class="whatsapp" onclick="messageOne('${m[0]}')">Contact</button>`:""}
- </td></tr>`}).join("")||'<tr><td colspan="7">No members added yet.</td></tr>'}</table></div></div>`,
-Payments:()=>`<div class="section-title"><h2>Payment History</h2><div class="actions"><button class="secondary" onclick="bulkPaymentForm()">+ Bulk Add (paste a list)</button><button class="primary" onclick="paymentForm()">+ Add Payment</button></div></div>
- <div class="card"><label>Filter by payment type</label><select onchange="paymentsFilter=this.value;render()"><option ${paymentsFilter==="All"?"selected":""}>All</option>${data.paymentTypes.map(t=>`<option ${paymentsFilter===t.name?"selected":""}>${t.name}</option>`).join("")}</select></div>
- <div class="card"><div class="tablewrap"><table><tr><th>ID</th><th>Name</th><th>Type</th><th>Amount</th><th>Date</th><th>Time</th><th>Method</th><th>Status</th></tr>
- ${data.payments.filter(p=>paymentsFilter==="All"||(p[9]||defaultTypeName())===paymentsFilter).map(p=>`<tr><td>${p[0]}</td><td>${p[2]}</td><td>${p[9]||defaultTypeName()}</td><td>${money(p[3])}</td><td>${p[4]}</td><td>${p[5]}</td><td>${p[6]}</td><td><span class="pill ${p[7]==="Pending"?"pending":"paid"}">${p[7]}</span></td></tr>`).join("")||'<tr><td colspan="8">No payments logged yet.</td></tr>'}</table></div></div>`,
-Reminders:()=>{
- let list=members().map(m=>({m,cs:memberCategoryStats(m[1])})).map(x=>({...x,owed:x.cs.reduce((a,c)=>a+c.balance+c.fine,0),fineTotal:x.cs.reduce((a,c)=>a+c.fine,0),late:x.cs.some(c=>c.overdue)})).filter(x=>x.owed>0).sort((a,b)=>b.owed-a.owed);
- return `<div class="section-title"><h2>Payment Reminders</h2></div>
- <div class="notice">Owed amounts are calculated automatically: (Expected Amount set per Category in Settings) − (total paid), plus any Late Payment Fine set in Settings once the Due Date has passed. A category is only tracked here if it has an Expected Amount &gt; 0.</div>
- <div class="card"><label>Reminder message template</label><textarea id="remTemplate" oninput="reminderTemplate=this.value">${reminderTemplate}</textarea>
- <p class="small">Placeholders: {NAME} {OWED} {FINE} {CATEGORY} {STATUS} {BALANCE} — all filled in automatically per member when you tap Remind.</p></div>
- <div class="card"><div class="tablewrap"><table><tr><th>Name</th><th>Number</th><th>Owed (incl. fines)</th><th>Breakdown</th><th>Status</th><th>Action</th></tr>
- ${list.map(x=>`<tr><td>${x.m[1]}</td><td>${x.m[2]||"Missing"}</td><td>${money(x.owed)}</td><td>${x.cs.filter(c=>c.balance>0).map(c=>`${c.type}: ${money(c.balance)}${c.overdue?` + ${money(c.fine)} fine <span class="pill pending">Late ${c.daysLate}d</span>`:""}`).join("<br>")}</td><td>${x.late?'<span class="pill pending">Late</span>':'<span class="pill paid">Pending</span>'}</td><td>${x.m[2]?`<button class="whatsapp" onclick="messageOneReminder('${x.m[0]}')">Remind</button>`:"—"}</td></tr>`).join("")||'<tr><td colspan="6">No outstanding balances right now 🎉 — set an Expected Amount on a Payment Type in Settings to start tracking dues and late payments.</td></tr>'}
- </table></div></div>`},
-Rules:()=>`<div class="section-title"><h2>Fund Guidelines</h2><button class="primary" onclick="addRule()">+ Add Rule</button></div><div class="card"><ol>${data.rules.map((r,i)=>`<li style="padding:8px">${r}</li>`).join("")}</ol></div>`,
-WhatsApp:()=>{let s=stats();return `<h2>WhatsApp &amp; SMS Message Center</h2><div class="card">
-<p>Current balance: <b>${money(s.balance)}</b></p>
-<label>Message template (use {NAME} and {BALANCE})</label>
-<textarea id="waMsg" oninput="waTemplate=this.value">${waTemplate}</textarea>
-<p class="small">Buttons open WhatsApp or your SMS app with the message ready to send. You still confirm/send on your phone.</p>
-<div class="actions" style="margin-top:10px"><button class="whatsapp" onclick="contactAll()">Contact All</button></div>
-<div class="tablewrap"><table><tr><th>Name</th><th>Number</th><th>Action</th></tr>
-${members().map(m=>`<tr><td>${m[1]}</td><td>${m[2]||"Missing"}</td><td class="actions">${m[2]?`<button class="whatsapp" onclick="messageOne('${m[0]}')">Contact</button>`:"—"}</td></tr>`).join("")||'<tr><td colspan="3">No members added yet.</td></tr>'}
-</table></div></div>`},
-Reports:()=>{let rows=members().map(m=>{let ps=memberPayments(m[1]),paid=ps.reduce((a,p)=>a+p[3],0),last=ps.length?[...ps].sort((a,b)=>(b[4]+" "+b[5]).localeCompare(a[4]+" "+a[5]))[0]:null;return [m[1],paid,ps.length,last?last[4]:"—"]}).sort((a,b)=>b[1]-a[1]);
-return `<div class="section-title"><h2>Contribution Summary</h2><button class="primary" onclick="window.print()">Print</button></div><div class="card"><div class="tablewrap"><table><tr><th>Member</th><th>Total Contributed</th><th>Times Contributed</th><th>Last Contribution</th></tr>${rows.map(r=>`<tr><td>${r[0]}</td><td>${money(r[1])}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join("")||'<tr><td colspan="4">No members added yet.</td></tr>'}</table></div></div>`},
-Settings:()=>`<h2>System Settings</h2>
-<div class="card"><div class="section-title"><h3>Payment Types</h3><button class="primary" onclick="paymentTypeForm()">+ Add Payment Type</button></div>
-<p class="small">Each payment type has its own heading. Contribution amounts per person are entered freely when logging a payment — but you can optionally set an "Expected Amount" and "Due Date" here so LEWA MAGIL FORUM can automatically calculate who is behind and flag late payments in the Reminders tab.</p>
-<div class="tablewrap"><table><tr><th>Heading</th><th>Expected Amount</th><th>Due Date</th><th>Action</th></tr>${data.paymentTypes.map(t=>`<tr><td>${t.name}</td><td>${t.amount?money(t.amount):"—"}</td><td>${t.dueDate||"—"}</td><td class="actions"><button class="primary" onclick="editPaymentType('${t.id}')">Edit</button><button class="danger" onclick="deletePaymentType('${t.id}')">Delete</button></td></tr>`).join("")}</table></div></div>
-<div class="card"><div class="formgrid">
- <div><label>Fund status</label><select id="setStatus"><option ${data.settings.status==="Active"?"selected":""}>Active</option><option ${data.settings.status==="Closed"?"selected":""}>Closed</option></select></div>
- <div><label>Late Payment Fine (KSh)</label><input id="setFineAmount" type="number" value="${data.settings.lateFineAmount||0}"></div>
- <div><label>Fine Type</label><select id="setFineType"><option value="fixed" ${data.settings.lateFineType==="fixed"?"selected":""}>One-time flat fee</option><option value="perday" ${data.settings.lateFineType==="perday"?"selected":""}>Per day late</option></select></div>
- </div><p class="small">When Active, you'll be prompted to notify members of the new balance right after logging a payment. The fine is applied automatically once a category's Due Date (set under Payment Types) has passed, and shows up in the Reminders tab and reminder messages.</p><br><button class="primary" onclick="saveSettings()">Save Settings</button></div>
- <div class="card"><h3>Data management</h3><div class="actions"><button class="primary" onclick="exportData()">Export JSON Backup</button><button class="danger" onclick="resetData()">Reset All Data</button></div></div>`
+ ${m[2]?`<button class="whatsapp" onclick="contactMember('${m[0]}')">Contact</button>`:""}
+ </td></tr>`}).join("")||'<tr><td colspan="4">No members match.</td></tr>'}</table></div></div>`
+},
+Contributions:()=>{
+ let list=data.paymentTypes.slice().reverse();
+ return `<h2>All Contributions</h2>
+ <div class="card"><p class="small">Every contribution — Augustine's, Meshack's, this one, and any others — shown as its own card with its own color. Tap one to see everything about it.</p></div>
+ ${list.map((t,i)=>{let s=contributionSummary(t);let color=accents[i%accents.length];
+ return `<div class="card" style="border-left:6px solid ${color}">
+ <div class="section-title"><h3 style="margin:0">${t.name}</h3>${t.closed?'<span class="pill" style="background:#e2e8f0;color:#475569">Closed</span>':'<span class="pill paid">🟢 Open</span>'}</div>
+ <p class="small">${t.amount?`KSh ${t.amount} per person`:"Custom amount"}${t.dueDate?` · due ${t.dueDate}`:""}</p>
+ <p><b>${money(s.collected)}</b> collected${s.expectedTotal?` of ${money(s.expectedTotal)} expected`:""} · <span style="color:var(--green);font-weight:700">${s.paidNames.length} cleared</span>${s.partialNames.length?` · <span style="color:#a16207;font-weight:700">${s.partialNames.length} partly paid</span>`:""}${s.oweNames.length?` · <span style="color:var(--red);font-weight:700">${s.oweNames.length} not paid</span>`:""}</p>
+ <button class="secondary" onclick="contributionDetail('${t.id}')">View Details</button>
+ </div>`}).join("")}`
+},
+Settings:()=>`<h2>Settings</h2>
+<div class="card"><div class="formgrid"><div><label>Fund status</label><select id="setStatus"><option ${data.settings.status==="Active"?"selected":""}>Active</option><option ${data.settings.status==="Closed"?"selected":""}>Closed</option></select></div></div><br><button class="primary" onclick="saveSettings()">Save</button></div>
+<div class="card"><h3>Data</h3><div class="actions"><button class="primary" onclick="exportData()">Export Backup</button><button class="danger" onclick="resetData()">Reset All Data</button></div></div>`
 };
-function bindCharts(){
- if(active!=="Dashboard")return;
- let s=stats();
- if(chart1)chart1.destroy();if(chart2)chart2.destroy();
- chart1=new Chart(document.getElementById("statusChart"),{type:"doughnut",data:{labels:["Received","Pending"],datasets:[{data:[s.received,s.pending],backgroundColor:["#15803d","#b91c1c"]}]},options:{responsive:true}});
- let vals=members().map(m=>memberPayments(m[1]).reduce((a,p)=>a+p[3],0));
- chart2=new Chart(document.getElementById("memberChart"),{type:"bar",data:{labels:members().map(m=>m[1]),datasets:[{label:"KSh Contributed",data:vals,backgroundColor:"#6b3410"}]},options:{responsive:true,plugins:{legend:{display:false}}}});
-}
 function modal(title,body){
  let old=document.getElementById("modal");if(old)old.remove();
  let d=document.createElement("div");d.id="modal";d.style="position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;padding:15px;z-index:100";
  d.innerHTML=`<div class="card" style="width:min(600px,100%);max-height:90vh;overflow:auto"><div class="section-title"><h2>${title}</h2><button class="secondary" onclick="document.getElementById('modal').remove()">✕</button></div>${body}</div>`;document.body.appendChild(d);
+}
+function startNewContribution(){
+ modal("Start New Contribution",`<p class="small">This closes the current contribution and starts a fresh one. Every member starts this new round as owing until logged as paid.</p>
+ <div class="formgrid">
+ <div><label>Contribution Name</label><input id="scName" placeholder="e.g. Hospital Bill Help"></div>
+ <div><label>Amount per person (KSh)</label><input id="scAmount" type="number" value="300"></div>
+ <div><label>Due Date (optional)</label><input id="scDue" type="date"></div>
+ </div>
+ <br><button class="primary" onclick="saveNewContribution()">Start Contribution</button>`);
+}
+function saveNewContribution(){
+ let n=document.getElementById("scName").value.trim();
+ let amt=Number(document.getElementById("scAmount").value||0);
+ let due=document.getElementById("scDue").value||"";
+ if(!n)return alert("Give this contribution a name");
+ if(data.paymentTypes.find(x=>x.name.toLowerCase()===n.toLowerCase()))return alert("A contribution with that name already exists — choose a different name");
+ let cur=openContribution();if(cur)cur.closed=true;
+ data.paymentTypes.push({id:"T"+Date.now(),name:n,amount:amt,dueDate:due,closed:false});
+ data.settings.activeContribution=n;
+ document.getElementById("modal").remove();
+ save();
+ modal("Contribution started 🎉",`<p><b>${n}</b> is now open${amt?` — everyone is expected to pay ${money(amt)}`:""}${due?`, due by ${due}`:""}. The previous contribution has been closed — you'll find every contribution, open and closed, in the Contributions tab.</p>
+ <div class="actions" style="margin-top:10px"><button class="whatsapp" onclick="document.getElementById('modal').remove();announceCurrent()">📢 Announce to Everyone</button><button class="secondary" onclick="document.getElementById('modal').remove()">Done</button></div>`);
+}
+function logPayment(id){
+ let t=openContribution();
+ let m=members().find(x=>x[0]===id);if(!m)return;
+ let st=memberContribStatus(m[1],t);
+ modal("Log Payment — "+m[1],`<div class="formgrid">
+ <div><label>Amount (KSh)</label><input id="lpAmt" type="number" value="${st.remaining||t.amount||0}"></div>
+ <div><label>Method</label><select id="lpMethod"><option>M-Pesa</option><option>Cash</option><option>Bank</option><option>Other</option></select></div>
+ <div><label>Date</label><input id="lpDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
+ </div>
+ <br><button class="primary" onclick="saveLoggedPayment('${id}')">Save Payment</button>`);
+}
+function saveLoggedPayment(id){
+ let t=openContribution();
+ let m=members().find(x=>x[0]===id);if(!m)return;
+ let amt=Number(document.getElementById("lpAmt").value||0);
+ if(!amt)return alert("Enter an amount");
+ let method=document.getElementById("lpMethod").value;
+ let date=document.getElementById("lpDate").value||new Date().toISOString().slice(0,10);
+ let p=["P"+String(data.payments.length+1).padStart(3,"0"),id,m[1],amt,date,new Date().toTimeString().slice(0,5),method,"Received","",t.name];
+ data.payments.push(p);
+ document.getElementById("modal").remove();
+ save();
+}
+function reminderMsgFor(name){
+ let t=openContribution();
+ let st=memberContribStatus(name,t);
+ if(st.status==="paid")return `Hello ${name}, you have already cleared your contribution for ${t.name}. Thank you!`;
+ if(t.amount>0)return `Hello ${name}, this is a reminder from LEWA MAGIL FORUM. You need ${money(st.remaining)} to complete your contribution for ${t.name}. Thank you!`;
+ return `Hello ${name}, this is a reminder from LEWA MAGIL FORUM. Kindly make your contribution for ${t.name} when you're able. Thank you!`;
+}
+function contactMsgFor(name){return `Hello ${name}, greetings from LEWA MAGIL FORUM.`}
+function sendWA(phone,taId){let msg=document.getElementById(taId).value;let n=normalizePhone(phone);window.open("https://wa.me/"+n+"?text="+encodeURIComponent(msg),"_blank")}
+function sendSMS(phone,taId){let msg=document.getElementById(taId).value;let n=normalizePhone(phone);window.open("sms:"+n+"?&body="+encodeURIComponent(msg))}
+function remindMember(id){
+ let m=members().find(x=>x[0]===id);if(!m)return;
+ let msg=reminderMsgFor(m[1]);
+ modal("Reminder — "+m[1],`<label>Message (edit if needed)</label><textarea id="rMsg">${msg}</textarea><br><br><p>Choose how to reach ${m[1]}:</p><div class="actions">${m[2]?`<a class="call" href="tel:${m[2]}">Call</a><button class="whatsapp" onclick="sendWA('${m[2]}','rMsg')">WhatsApp</button><button class="secondary" onclick="sendSMS('${m[2]}','rMsg')">SMS</button>`:"<p class='small'>No number on file for this member.</p>"}</div>`);
+}
+function contactMember(id){
+ let m=members().find(x=>x[0]===id);if(!m)return;
+ let msg=contactMsgFor(m[1]);
+ modal("Contact — "+m[1],`<label>Message (edit if needed)</label><textarea id="cMsg">${msg}</textarea><br><br><p>Choose how to reach ${m[1]}:</p><div class="actions">${m[2]?`<a class="call" href="tel:${m[2]}">Call</a><button class="whatsapp" onclick="sendWA('${m[2]}','cMsg')">WhatsApp</button><button class="secondary" onclick="sendSMS('${m[2]}','cMsg')">SMS</button>`:"<p class='small'>No number on file for this member.</p>"}</div>`);
+}
+function remindAllOwing(){
+ let t=openContribution();
+ let notPaid=members().map(m=>({m,st:memberContribStatus(m[1],t)})).filter(x=>x.st.status!=="paid");
+ if(!notPaid.length)return modal(t.name,`<p>Everyone has cleared <b>${t.name}</b> 🎉</p>`);
+ modal("Remind — "+t.name,`<div class="tablewrap"><table><tr><th>Name</th><th>Status</th><th>Number</th><th>Action</th></tr>${notPaid.map(x=>`<tr style="background:${x.st.status==="partial"?"#fffbeb":"#fef2f2"}"><td>${x.m[1]}</td><td><span class="pill ${x.st.status==="partial"?"partial":"pending"}">${x.st.status==="partial"?`Owes ${money(x.st.remaining)}`:(t.amount?`Owes ${money(t.amount)}`:"Not paid")}</span></td><td>${x.m[2]?formatPhone(x.m[2]):"Missing"}</td><td class="actions">${x.m[2]?`<a class="call" href="tel:${x.m[2]}">Call</a><button class="whatsapp" onclick="remindMember('${x.m[0]}')">Message</button>`:"—"}</td></tr>`).join("")}</table></div>`);
+}
+function announceCurrent(){
+ let t=openContribution();
+ let msg=`Hello everyone! A new contribution is open: *${t.name}*.${t.amount?` Please contribute ${money(t.amount)} each.`:""}${t.dueDate?` Deadline: ${t.dueDate}.`:""} Thank you!`;
+ modal("Announce — "+t.name,`<label>Message (edit if needed)</label><textarea id="announceMsg">${msg}</textarea><br><br><p>Send to everyone at once:</p><div class="actions"><button class="whatsapp" onclick="broadcastSMS('announceMsg')">SMS All (bulk)</button><button class="secondary" onclick="broadcastWAList('announceMsg','announceWAList')">WhatsApp All (one by one)</button></div><div id="announceWAList"></div>`);
+}
+function broadcastSMS(taId){
+ let list=members().filter(m=>m[2]);
+ if(!list.length)return alert("No members with a WhatsApp/phone number yet.");
+ let numbers=list.map(m=>normalizePhone(m[2])).join(",");
+ let body=document.getElementById(taId).value;
+ window.open("sms:"+numbers+"?&body="+encodeURIComponent(body));
+}
+function broadcastWAList(taId,divId){
+ let list=members().filter(m=>m[2]);
+ document.getElementById(divId).innerHTML=`<div class="tablewrap" style="margin-top:10px"><table><tr><th>Name</th><th>Action</th></tr>${list.map(m=>`<tr><td>${m[1]}</td><td><button class="whatsapp" onclick="sendWA('${m[2]}','${taId}')">Open WhatsApp</button></td></tr>`).join("")||'<tr><td colspan="2">No members with numbers yet.</td></tr>'}</table></div>`;
+}
+function contributionDetail(id){
+ let t=data.paymentTypes.find(x=>x.id===id);if(!t)return;
+ let s=contributionSummary(t);
+ let isOpen=!t.closed;
+ let rows=members().map(m=>{
+  let st=memberContribStatus(m[1],t);
+  let pillClass=st.status==="paid"?"paid":st.status==="partial"?"partial":"pending";
+  let rowBg=st.status==="paid"?"#f0fdf4":st.status==="partial"?"#fffbeb":"#fef2f2";
+  let label=st.status==="paid"?"Cleared":st.status==="partial"?`Owes ${money(st.remaining)}`:(t.amount?`Owes ${money(t.amount)}`:"Not paid");
+  let actionBtns=isOpen?`<button class="primary" onclick="logPayment('${m[0]}')">Log Payment</button>${st.status!=="paid"&&m[2]?`<button class="whatsapp" onclick="remindMember('${m[0]}')">Remind</button>`:""}`:"";
+  return `<tr style="background:${rowBg}"><td>${m[1]}</td><td><span class="pill ${pillClass}">${label}</span></td><td>${m[2]?formatPhone(m[2]):"—"}</td><td class="actions">${actionBtns}</td></tr>`;
+ }).join("");
+ modal(t.name,`<p class="small">${isOpen?'<span class="pill paid">🟢 Open</span>':'<span class="pill" style="background:#e2e8f0;color:#475569">Closed</span>'} ${t.amount?`· KSh ${t.amount} per person`:"· Custom amount"}${t.dueDate?` · due ${t.dueDate}`:""}</p>
+ <p><b>${money(s.collected)}</b> collected${s.expectedTotal?` of ${money(s.expectedTotal)} expected`:""} · ${s.paidNames.length}/${s.total} cleared</p>
+ ${isOpen?`<div class="actions" style="margin-bottom:10px"><button class="whatsapp" onclick="remindAllOwing()">Remind all who haven't cleared</button><button class="secondary" onclick="announceCurrent()">📢 Announce</button></div>`:""}
+ <div class="tablewrap"><table><tr><th>Name</th><th>Status</th><th>Number</th><th>Action</th></tr>${rows}</table></div>`);
 }
 function memberForm(existing=null){
  let m=existing||["","","",""];
@@ -226,66 +314,33 @@ function saveMember(id){
  if(id){let m=members().find(x=>x[0]===id);m[1]=n;m[2]=p}else members().push(["M"+String(members().length+1).padStart(3,"0"),n,p,"Member"]);
  document.getElementById("modal").remove();save();
 }
-function paymentForm(prefillMemberId){
- let mid=prefillMemberId||"";
- modal("Add Payment",`<div class="formgrid">
- <div><label>Client / Friend</label><select id="pn" onchange="document.getElementById('pnNewWrap').style.display=this.value==='__new__'?'block':'none';document.getElementById('pnNewPhoneHint').style.display=this.value==='__new__'?'block':'none'"><option value="">-- choose --</option>${members().map(m=>`<option value="${m[0]}" ${m[0]===mid?"selected":""}>${m[1]}</option>`).join("")}<option value="__new__">+ New person...</option></select></div>
- <div><label>Payment Type</label><select id="ptp">${data.paymentTypes.map(t=>`<option value="${t.name}">${t.name}</option>`).join("")}</select></div>
- <div><label>Amount</label><input id="pa" type="number" value="0"></div>
- <div><label>Date</label><input id="pd" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
- <div><label>Time</label><input id="pt" type="time" value="${new Date().toTimeString().slice(0,5)}"></div>
- <div><label>Method</label><select id="pm"><option>M-Pesa</option><option>Cash</option><option>Bank</option><option>Other</option></select></div>
- <div><label>Status</label><select id="ps"><option>Received</option><option>Pending</option></select></div>
- </div>
- <div id="pnNewWrap" style="display:none" class="formgrid"><div><label>New person's name</label><input id="pnNewName" placeholder="Full name"></div><div><label>WhatsApp (optional)</label><input id="pnNewPhone" placeholder="07..." oninput="livePhonePreview('pnNewPhone','pnNewPhoneHint')"></div></div><p class="small" id="pnNewPhoneHint" style="display:none">Numbers are automatically formatted to start with +254 when saved.</p>
- <br><div class="actions"><button class="primary" onclick="savePayment(false)">Save Payment</button><button class="secondary" onclick="savePayment(true)">Save &amp; Add Another Payment</button></div>`);
-}
-function resolveMemberId(){
- let sel=document.getElementById("pn").value;
- if(sel==="__new__"){
-  let n=document.getElementById("pnNewName").value.trim(),ph=formatPhone(document.getElementById("pnNewPhone").value.trim());
-  if(!n){alert("Enter the new person's name");return null}
-  let id="M"+String(members().length+1).padStart(3,"0");
-  members().push([id,n,ph,"Member"]);
-  return id;
- }
- if(!sel){alert("Choose a member or add a new person");return null}
- return sel;
-}
-function savePayment(andAnother){
- let id=resolveMemberId(); if(!id)return;
- let m=members().find(x=>x[0]===id),type=document.getElementById("ptp").value;
- let p=["P"+String(data.payments.length+1).padStart(3,"0"),id,m[1],Number(document.getElementById("pa").value),document.getElementById("pd").value,document.getElementById("pt").value,document.getElementById("pm").value,document.getElementById("ps").value,"",type];
- data.payments.push(p);
- if(andAnother){save();paymentForm(id);return}
- save();
- if(data.settings.status==="Active"){promptNotifyBalance()}else{let old=document.getElementById("modal");if(old)old.remove()}
+function parseBulkLine(line){
+ line=line.replace(/^\s*\d+[\.\)]?\s+(?=[A-Za-z])/,"");
+ let nums=[...line.matchAll(/\d+(\.\d+)?/g)];
+ if(!nums.length)return null;
+ let last=nums[nums.length-1];
+ let amount=Number(last[0]);
+ let name=line.slice(0,last.index).trim().replace(/[-=:]+$/,"").trim().replace(/\s{2,}/g," ");
+ if(!name)return null;
+ return {name,amount};
 }
 function bulkPaymentForm(){
- modal("Bulk Add Payments — Paste a List",`<div class="formgrid">
- <div><label>Category</label><select id="bulkCat" onchange="document.getElementById('bulkNewCatWrap').style.display=this.value==='__new__'?'block':'none'">${data.paymentTypes.map(t=>`<option value="${t.name}">${t.name}</option>`).join("")}<option value="__new__">+ New category...</option></select></div>
+ let t=openContribution();
+ modal("Paste a List — "+t.name,`<p class="small">Paste one person per line — this is added to the current open contribution: <b>${t.name}</b>.</p>
+ <div class="formgrid">
  <div><label>Date</label><input id="bulkDate" type="date" value="${new Date().toISOString().slice(0,10)}"></div>
  <div><label>Method</label><select id="bulkMethod"><option>M-Pesa</option><option>Cash</option><option>Bank</option><option>Other</option></select></div>
  </div>
- <div id="bulkNewCatWrap" style="display:none" class="formgrid"><div><label>New category name</label><input id="bulkNewCatName"></div><div><label>Expected Amount per person (optional)</label><input id="bulkNewCatAmount" type="number" value="300"></div></div>
  <label>Paste the list — one member per line</label>
  <textarea id="bulkText" rows="10" placeholder="1. Micah lee=300-cleared✅
 2. Augustine sankale =300 cleared ✅"></textarea>
- <p class="small">Numbering, "cleared", checkmarks, and "=" are ignored automatically — the last number on each line is used as that person's amount. Names not already in Members will be added automatically (with no number, editable later). Lines like "Mpesa=", "Cash=", "Total=" or "Treasurer no." are skipped, but the stated total (if any) is checked against what's imported.</p>
+ <p class="small">Numbering, "cleared", checkmarks are ignored automatically — the last number on each line is used as that person's amount. New names are added to Members automatically.</p>
  <br><button class="primary" onclick="runBulkImport()">Preview &amp; Import</button>`);
 }
 function runBulkImport(){
- let catSel=document.getElementById("bulkCat").value;
+ let t=openContribution();
  let date=document.getElementById("bulkDate").value||new Date().toISOString().slice(0,10);
  let method=document.getElementById("bulkMethod").value;
- let catName=catSel;
- if(catSel==="__new__"){
-  let n=document.getElementById("bulkNewCatName").value.trim();
-  let amt=Number(document.getElementById("bulkNewCatAmount").value||0);
-  if(!n)return alert("Enter a name for the new category");
-  if(!data.paymentTypes.find(t=>t.name===n))data.paymentTypes.push({id:"T"+(data.paymentTypes.length+1)+"_"+Date.now(),name:n,amount:amt,dueDate:""});
-  catName=n;
- }
  let text=document.getElementById("bulkText").value;
  let lines=text.split("\n").map(l=>l.trim()).filter(Boolean);
  let entries=[],statedTotal=null;
@@ -305,79 +360,16 @@ function runBulkImport(){
   if(existing)id=existing[0];
   else{id="M"+String(members().length+1).padStart(3,"0");members().push([id,e.name,"","Member"])}
   let m=members().find(x=>x[0]===id);
-  let p=["P"+String(data.payments.length+1).padStart(3,"0"),id,m[1],e.amount,date,new Date().toTimeString().slice(0,5),method,"Received","",catName];
+  let p=["P"+String(data.payments.length+1).padStart(3,"0"),id,m[1],e.amount,date,new Date().toTimeString().slice(0,5),method,"Received","",t.name];
   data.payments.push(p);
  });
  let sum=entries.reduce((a,e)=>a+e.amount,0);
  save();
  let old=document.getElementById("modal");if(old)old.remove();
- let mismatchNote=(statedTotal!==null&&statedTotal!==sum)?`<p style="color:#b91c1c">⚠️ Heads up: the total in your paste (${money(statedTotal)}) doesn't match the sum of the ${entries.length} lines imported (${money(sum)}). Everything below has already been added — double-check the list and edit any line in the Payments tab if a number was off.</p>`:"";
- modal("Import complete",`<p>Added ${entries.length} payment(s) under <b>${catName}</b> totalling <b>${money(sum)}</b>.</p>${mismatchNote}<button class="secondary" onclick="document.getElementById('modal').remove()">Close</button>`);
+ let mismatchNote=(statedTotal!==null&&statedTotal!==sum)?`<p style="color:#b91c1c">⚠️ Heads up: the total in your paste (${money(statedTotal)}) doesn't match the sum of the ${entries.length} lines imported (${money(sum)}). Everything below has already been added — double-check the list and edit in Log Payment if a number was off.</p>`:"";
+ modal("Import complete",`<p>Added ${entries.length} payment(s) to <b>${t.name}</b> totalling <b>${money(sum)}</b>.</p>${mismatchNote}<button class="secondary" onclick="document.getElementById('modal').remove()">Close</button>`);
 }
-function promptNotifyBalance(){
- let bal=stats().balance;
- modal("Payment added — Notify friends?",`<p>Current balance: <b>${money(bal)}</b></p><label>Message</label><textarea id="balMsg">${waTemplate.replaceAll("{NAME}","everyone").replaceAll("{BALANCE}",money(bal))}</textarea><div class="actions" style="margin-top:10px"><button class="whatsapp" onclick="notifyAllSMS()">SMS All (bulk)</button><button class="primary" onclick="paymentForm()">+ Add Another Payment</button><button class="secondary" onclick="document.getElementById('modal').remove()">Skip</button></div><p class="small">Opens your SMS app with all members' numbers pre-filled. For WhatsApp, use the WhatsApp &amp; SMS tab to message people one by one.</p>`);
-}
-function paymentTypeForm(existing){
- let t=existing||{id:"",name:"",amount:0,dueDate:""};
- modal(existing?"Edit Payment Type":"Add Payment Type",`<div class="formgrid">
- <div><label>Heading / Name</label><input id="ptn" value="${t.name}"></div>
- <div><label>Expected Amount (optional)</label><input id="pta" type="number" value="${t.amount||0}"></div>
- <div><label>Due Date (optional)</label><input id="ptd" type="date" value="${t.dueDate||""}"></div>
- </div><p class="small">Leave Expected Amount at 0 to skip due/late tracking for this category.</p><br><button class="primary" onclick="savePaymentType('${t.id}')">Save</button>`);
-}
-function editPaymentType(id){paymentTypeForm(data.paymentTypes.find(x=>x.id===id))}
-function savePaymentType(id){
- let n=document.getElementById("ptn").value.trim();
- let amt=Number(document.getElementById("pta").value||0);
- let due=document.getElementById("ptd").value||"";
- if(!n)return alert("Name is required");
- if(id){let t=data.paymentTypes.find(x=>x.id===id);t.name=n;t.amount=amt;t.dueDate=due}
- else data.paymentTypes.push({id:"T"+(data.paymentTypes.length+1)+"_"+Date.now(),name:n,amount:amt,dueDate:due});
- document.getElementById("modal").remove();save();
-}
-function deletePaymentType(id){
- if(data.paymentTypes.length<=1)return alert("At least one payment type is required.");
- if(confirm("Delete this payment type? Existing payment records keep their recorded heading.")){data.paymentTypes=data.paymentTypes.filter(x=>x.id!==id);save()}
-}
-function addRule(){modal("Add Guideline",`<textarea id="rule"></textarea><br><button class="primary" onclick="data.rules.push(document.getElementById('rule').value);document.getElementById('modal').remove();save()">Add Guideline</button>`)}
-function openWA(name,phone){let bal=stats().balance;let msg=waTemplate.replaceAll("{NAME}",name).replaceAll("{BALANCE}",money(bal));let n=normalizePhone(phone);window.open("https://wa.me/"+n+"?text="+encodeURIComponent(msg),"_blank")}
-function openSMS(name,phone){let bal=stats().balance;let msg=waTemplate.replaceAll("{NAME}",name).replaceAll("{BALANCE}",money(bal));let n=normalizePhone(phone);window.open("sms:"+n+"?&body="+encodeURIComponent(msg))}
-function notifyAllSMS(){
- let list=members().filter(m=>m[2]);
- if(!list.length)return alert("No members with a WhatsApp/phone number yet.");
- let numbers=list.map(m=>normalizePhone(m[2])).join(",");
- let bal=stats().balance;
- let bodyEl=document.getElementById("balMsg")||document.getElementById("allMsg");
- let body=bodyEl?bodyEl.value:waTemplate.replaceAll("{NAME}","everyone").replaceAll("{BALANCE}",money(bal));
- window.open("sms:"+numbers+"?&body="+encodeURIComponent(body));
-}
-function messageOne(id){
- let m=members().find(x=>x[0]===id);if(!m)return;
- let bal=stats().balance;
- let msg=waTemplate.replaceAll("{NAME}",m[1]).replaceAll("{BALANCE}",money(bal));
- modal("Contact "+m[1],`<label>Message (edit if needed)</label><textarea id="oneMsg">${msg}</textarea><br><br><p>Choose how to reach ${m[1]}:</p><div class="actions">${m[2]?`<a class="call" href="tel:${m[2]}">Call</a><button class="whatsapp" onclick="sendOneWA('${m[2]}')">WhatsApp</button><button class="secondary" onclick="sendOneSMS('${m[2]}')">SMS</button>`:"<p class='small'>No number on file for this member.</p>"}</div>`);
-}
-function sendOneWA(phone){let msg=document.getElementById("oneMsg").value;let n=normalizePhone(phone);window.open("https://wa.me/"+n+"?text="+encodeURIComponent(msg),"_blank")}
-function sendOneSMS(phone){let msg=document.getElementById("oneMsg").value;let n=normalizePhone(phone);window.open("sms:"+n+"?&body="+encodeURIComponent(msg))}
-function messageOneReminder(id){
- let m=members().find(x=>x[0]===id);if(!m)return;
- let msg=buildReminderMsg(m[1]);
- modal("Payment Reminder — "+m[1],`<label>Message (calculated automatically — edit if needed)</label><textarea id="remMsg">${msg}</textarea><br><br><p>Choose how to reach ${m[1]}:</p><div class="actions">${m[2]?`<a class="call" href="tel:${m[2]}">Call</a><button class="whatsapp" onclick="sendOneWAField('${m[2]}','remMsg')">WhatsApp</button><button class="secondary" onclick="sendOneSMSField('${m[2]}','remMsg')">SMS</button>`:"<p class='small'>No number on file for this member.</p>"}</div>`);
-}
-function sendOneWAField(phone,taId){let msg=document.getElementById(taId).value;let n=normalizePhone(phone);window.open("https://wa.me/"+n+"?text="+encodeURIComponent(msg),"_blank")}
-function sendOneSMSField(phone,taId){let msg=document.getElementById(taId).value;let n=normalizePhone(phone);window.open("sms:"+n+"?&body="+encodeURIComponent(msg))}
-function contactAll(){
- let bal=stats().balance;
- let msg=waTemplate.replaceAll("{NAME}","everyone").replaceAll("{BALANCE}",money(bal));
- modal("Contact All Members",`<label>Message (edit if needed)</label><textarea id="allMsg">${msg}</textarea><br><br><p>Choose how to reach everyone:</p><div class="actions"><button class="whatsapp" onclick="notifyAllSMS()">SMS All (bulk)</button><button class="secondary" onclick="showWAAllList()">WhatsApp All (one by one)</button></div><div id="waAllList"></div>`);
-}
-function showWAAllList(){
- let list=members().filter(m=>m[2]);
- document.getElementById("waAllList").innerHTML=`<div class="tablewrap" style="margin-top:10px"><table><tr><th>Name</th><th>Action</th></tr>${list.map(m=>`<tr><td>${m[1]}</td><td><button class="whatsapp" onclick="waOpenMsg('${m[2]}','allMsg')">Open WhatsApp</button></td></tr>`).join("")||'<tr><td colspan="2">No members with numbers yet.</td></tr>'}</table></div>`;
-}
-function waOpenMsg(phone,taId){let ta=document.getElementById(taId);let msg=ta?ta.value:waTemplate;let n=normalizePhone(phone);window.open("https://wa.me/"+n+"?text="+encodeURIComponent(msg),"_blank")}
-function saveSettings(){data.settings.status=document.getElementById("setStatus").value;data.settings.lateFineAmount=Number(document.getElementById("setFineAmount").value||0);data.settings.lateFineType=document.getElementById("setFineType").value;save()}
+function saveSettings(){data.settings.status=document.getElementById("setStatus").value;save()}
 function exportData(){let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="LEWA_MAGIL_FORUM_backup.json";a.click();URL.revokeObjectURL(a.href)}
 function resetData(){if(confirm("Reset all saved data? This clears members and payments.")){localStorage.removeItem(KEY);location.reload()}}
 render();
