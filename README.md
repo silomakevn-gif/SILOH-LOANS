@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -380,4 +380,472 @@
             <div class="pay-step"><div class="pay-step-dot">1</div><div class="pay-step-label">Dial<br>*334#</div></div>
             <div class="pay-step"><div class="pay-step-dot">2</div><div class="pay-step-label">Select<br>Send Money</div></div>
             <div class="pay-step"><div class="pay-step-dot">3</div><div class="pay-step-label">Enter<br>0702994132</div></div>
-            <div class="pay-step"><div class="pay-step-dot">4</div><div class="pay-step-label">Enter<br>KS
+            <div class="pay-step"><div class="pay-step-dot">4</div><div class="pay-step-label">Enter<br>KSh Amount</div></div>
+            <div class="pay-step"><div class="pay-step-dot">5</div><div class="pay-step-label">Enter PIN<br>to Confirm</div></div>
+          </div>
+        </div>
+
+        <div class="pay-method airtel">
+          <div class="pay-method-top">
+            <div class="pay-method-icon">A</div>
+            <div class="pay-method-info"><strong>Lipa na Airtel Money</strong><span>Send Money · SILOH LOANS</span></div>
+            <div class="pay-method-verified">✓ Verified</div>
+          </div>
+          <div class="pay-method-num mono"><span>0784 693 195</span><span class="copy-hint">Number</span></div>
+          <div class="pay-steps">
+            <div class="pay-step"><div class="pay-step-dot">1</div><div class="pay-step-label">Dial<br>*334#</div></div>
+            <div class="pay-step"><div class="pay-step-dot">2</div><div class="pay-step-label">Select<br>Send Money</div></div>
+            <div class="pay-step"><div class="pay-step-dot">3</div><div class="pay-step-label">Enter<br>0784693195</div></div>
+            <div class="pay-step"><div class="pay-step-dot">4</div><div class="pay-step-label">Enter<br>KSh Amount</div></div>
+            <div class="pay-step"><div class="pay-step-dot">5</div><div class="pay-step-label">Enter PIN<br>to Confirm</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin:26px 0 10px;">Check your balance</div>
+      <div class="field">
+        <label>Phone or National ID</label>
+        <input id="payLookup" type="text" placeholder="07XX XXX XXX or ID number" oninput="onLookupInput()">
+      </div>
+      <button class="btn btn-ghost" onclick="checkStatus()">Check my loan</button>
+
+      <div class="status-card" id="noLoanCard" style="display:none; margin-top:20px; text-align:center;">
+        <div style="font-size:28px; margin-bottom:8px;">🔍</div>
+        <div style="font-weight:600; font-size:14.5px; margin-bottom:4px;">No loan found</div>
+        <div style="font-size:12.5px; color:var(--dim);">Nothing on this device matches that phone or ID yet. Apply first, then check back here.</div>
+        <button class="btn btn-ghost" style="margin-top:14px;" onclick="goTo('apply')">Apply for a loan</button>
+      </div>
+
+      <div class="status-card" id="statusCard" style="display:none; margin-top:20px;">
+        <div style="font-size:10.5px; color:var(--dim); background:var(--surface-2); border-radius:8px; padding:8px 10px; margin-bottom:14px;">
+          Stored on this device only — not yet synced with SILOH LOANS records.
+        </div>
+        <div class="status-head">
+          <div><div style="font-size:11px; color:var(--dim);">Loan ref</div><div style="font-weight:700; font-size:15px;" id="stRef">—</div></div>
+          <div class="status-tag ontrack" id="stTag">—</div>
+        </div>
+
+        <div class="ledger">
+          <div class="ledger-bar">
+            <div class="ledger-seg seg-principal" id="segPrincipal" style="flex:1;">Principal</div>
+            <div class="ledger-seg seg-interest" id="segInterest" style="flex:1;">Interest</div>
+            <div class="ledger-seg seg-late" id="segLate" style="flex:0; display:none;">Late</div>
+          </div>
+          <div class="ledger-legend">
+            <div class="legend-item"><span class="legend-dot" style="background:var(--gold);"></span><span id="legPrincipal">Principal · KSh 0</span></div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--faint);"></span><span id="legInterest">Interest · KSh 0</span></div>
+            <div class="legend-item" id="legLateWrap" style="display:none;"><span class="legend-dot" style="background:var(--coral);"></span><span id="legLate">Late fee · KSh 0</span></div>
+          </div>
+          <div class="day-counter" id="dayCounter" style="display:none;"></div>
+        </div>
+
+        <div class="summary-card" style="margin-bottom:0;">
+          <div class="summary-row total"><span>Amount due now</span><strong id="stTotal">KSh 0</strong></div>
+        </div>
+
+        <button class="btn btn-primary" style="margin-top:16px;" id="paidBtn" onclick="confirmPayment()">I've paid — confirm on WhatsApp</button>
+      </div>
+    </section>
+
+    <!-- ================= HELP ================= -->
+    <section class="view" id="view-help">
+      <div class="hero" style="padding-bottom:6px;">
+        <div class="eyebrow">Help</div>
+        <h1 style="font-size:24px;">Questions, answered</h1>
+      </div>
+
+      <details class="faq" open>
+        <summary>How fast do I get the money?</summary>
+        <p>Most applications are confirmed on WhatsApp within minutes during business hours, and cash lands on your M-Pesa right after confirmation.</p>
+      </details>
+      <details class="faq">
+        <summary>What happens if I pay late?</summary>
+        <p>Late loans accrue an extra 10% of the loan amount for every day past the due date, on top of your original interest. Pay as soon as you can to keep it small.</p>
+      </details>
+      <details class="faq">
+        <summary>Can I have two loans at once?</summary>
+        <p>No. You need to fully repay your current loan before you qualify for another one.</p>
+      </details>
+      <details class="faq">
+        <summary>How do I repay?</summary>
+        <p>Pay the total shown on your loan status via our M-Pesa Till (0702 994 132) or Airtel Money (0784 693 195), then confirm your payment on WhatsApp so we can mark it received.</p>
+      </details>
+
+      <div class="section-title">Still stuck?</div>
+      <div class="contact-row">
+        <div class="contact-icon">💬</div>
+        <div><strong>Chat with us on WhatsApp</strong><span>Usually replies within minutes</span></div>
+      </div>
+      <button class="btn btn-mint" style="margin-top:12px;" onclick="openHelpWhatsapp()">Open WhatsApp chat</button>
+
+      <div class="contact-row" style="cursor:pointer;" onclick="goTo('terms')">
+        <div class="contact-icon">📄</div>
+        <div><strong>Terms &amp; Conditions</strong><span>Loan rules, repayment and late fees</span></div>
+      </div>
+    </section>
+
+    <!-- ================= TERMS & CONDITIONS ================= -->
+    <section class="view" id="view-terms">
+      <div class="hero" style="padding-bottom:6px;">
+        <div class="eyebrow">Legal</div>
+        <h1 style="font-size:24px;">Terms &amp; Conditions</h1>
+        <p>Please read before applying. By applying for a loan you agree to these terms.</p>
+      </div>
+
+      <div class="tc-block">
+        <h3>1. Eligibility</h3>
+        <p>You must be 18 years or older, hold a valid Kenyan National ID, and provide an active M-Pesa registered number in your name to be considered for a loan.</p>
+
+        <h3>2. Loan amounts &amp; interest</h3>
+        <p>Loans range from KSh 100 to KSh 5,000. A flat interest rate of 27.89% applies to the principal for the full loan term, regardless of when you repay within that term.</p>
+
+        <h3>3. Repayment periods</h3>
+        <p>Starter (KSh 100–500) and Basic (KSh 501–1,500) loans: 18 days. Standard (KSh 1,501–3,000): 21 days. Premium (KSh 3,001–5,000): 30 days.</p>
+
+        <h3>4. Late payments</h3>
+        <p>Loans not repaid by the due date accrue a late fee of 10% of the original loan amount for every day the balance remains unpaid, in addition to the interest already due. This continues until the loan is repaid in full.</p>
+
+        <h3>5. One loan at a time</h3>
+        <p>Only one active loan is permitted per customer. A new application will not be accepted until your current loan is fully repaid.</p>
+
+        <h3>6. Disbursement</h3>
+        <p>Approved loans are disbursed via M-Pesa to the number provided at application, after verification of your details on WhatsApp. SILOH LOANS is not liable for delays caused by incorrect number details supplied by you.</p>
+
+        <h3>7. Repayment</h3>
+        <p>Repayments are accepted via the M-Pesa Till or Airtel Money number shown in the app. You are responsible for confirming your payment with SILOH LOANS on WhatsApp; a payment is not considered received until confirmed.</p>
+
+        <h3>8. Approval &amp; refusal</h3>
+        <p>Submitting an application does not guarantee approval. SILOH LOANS may decline any application at its discretion, including where details cannot be verified.</p>
+
+        <h3>9. Your information</h3>
+        <p>Details you submit (name, phone, ID, M-Pesa number) are used solely to process and verify your loan and are shared with SILOH LOANS via WhatsApp for that purpose.</p>
+
+        <h3>10. Changes to these terms</h3>
+        <p>SILOH LOANS may update these terms from time to time. Continued use of the app after changes are posted constitutes acceptance of the updated terms.</p>
+      </div>
+
+      <button class="btn btn-ghost" style="margin-top:8px;" onclick="goTo('help')">Back to Help</button>
+    </section>
+
+  </main>
+
+  <nav>
+    <button class="active" data-view="home" onclick="goTo('home')"><span class="ic">⌂</span>Home</button>
+    <button data-view="apply" onclick="goTo('apply')"><span class="ic">＋</span>Apply</button>
+    <button data-view="pay" onclick="goTo('pay')"><span class="ic">▣</span>Pay Loan</button>
+    <button data-view="help" onclick="goTo('help')"><span class="ic">?</span>Help</button>
+  </nav>
+
+</div>
+
+<script>
+  const ADMIN_WHATSAPP = "254784693195";
+  const TILL_NUMBER = "0702994132";
+  const AIRTEL_NUMBER = "0784693195";
+  const INTEREST_RATE = 0.2789;
+  const LATE_FEE_RATE_PER_DAY = 0.10;
+
+  function tierFor(amount){
+    if(amount <= 500) return {name:"Starter", days:18};
+    if(amount <= 1500) return {name:"Basic", days:18};
+    if(amount <= 3000) return {name:"Standard", days:21};
+    return {name:"Premium", days:30};
+  }
+  function fmt(n){ return "KSh " + Math.round(n).toLocaleString(); }
+
+  function goTo(view){
+    document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+    document.getElementById("view-"+view).classList.add("active");
+    document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active", b.dataset.view===view));
+    window.scrollTo(0,0);
+    if(view==="apply") syncApplySummary();
+  }
+
+  function updateCalc(){
+    const amt = parseInt(document.getElementById("calcSlider").value,10);
+    const tier = tierFor(amt);
+    const interest = amt * INTEREST_RATE;
+    const total = amt + interest;
+    const lateDaily = amt * LATE_FEE_RATE_PER_DAY;
+
+    document.getElementById("calcAmountLabel").textContent = fmt(amt);
+    document.getElementById("tierBadge").textContent = tier.name + " tier";
+    document.getElementById("calcInterest").textContent = fmt(interest);
+    document.getElementById("calcDays").textContent = tier.days + " days";
+    document.getElementById("calcTotal").textContent = fmt(total);
+    document.getElementById("calcLate").textContent = "+" + fmt(lateDaily);
+
+    document.getElementById("apAmount").value = amt;
+    syncApplySummary();
+  }
+
+  function syncApplySummary(){
+    let amt = parseInt(document.getElementById("apAmount").value,10);
+    if(isNaN(amt)) amt = 0;
+    amt = Math.max(100, Math.min(5000, amt));
+    const tier = tierFor(amt);
+    const interest = amt * INTEREST_RATE;
+    const total = amt + interest;
+
+    document.getElementById("apTier").textContent = tier.name;
+    document.getElementById("apInterest").textContent = fmt(interest);
+    document.getElementById("apDays").textContent = tier.days + " days";
+    document.getElementById("apTotal").textContent = fmt(total);
+  }
+
+  function sendApplication(){
+    const name = document.getElementById("apName").value.trim();
+    const phone = document.getElementById("apPhone").value.trim();
+    const id = document.getElementById("apId").value.trim();
+    let mpesa = document.getElementById("apMpesa").value.trim();
+    let amt = parseInt(document.getElementById("apAmount").value,10) || 0;
+    amt = Math.max(100, Math.min(5000, amt));
+
+    if(!name || !phone || !id){
+      alert("Please fill in your name, phone and ID before continuing.");
+      return;
+    }
+
+    if(!document.getElementById("apAgree").checked){
+      alert("Please agree to the Terms & Conditions before applying.");
+      return;
+    }
+
+    const existing = findActiveLoan(phone, id);
+    if(existing){
+      alert("You already have an active loan (" + existing.ref + "). It needs to be repaid before applying again — check Pay Loan for the balance.");
+      goTo('pay');
+      return;
+    }
+
+    if(!mpesa) mpesa = "Same as above";
+
+    saveKnownNumber(phone);
+    if(mpesa !== "Same as above") saveKnownNumber(mpesa);
+    if(name) localStorage.setItem("siloh_last_name", name);
+
+    const tier = tierFor(amt);
+    const total = amt + amt*INTEREST_RATE;
+    const ref = "SL-" + Math.floor(1000 + Math.random()*9000);
+    const appliedAt = new Date();
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + tier.days);
+    const dueDateStr = dueDate.toLocaleDateString("en-GB", {day:"2-digit", month:"short", year:"numeric"});
+
+    saveLoanRecord({
+      ref: ref, name: name, phone: phone, id: id, mpesa: mpesa,
+      amount: amt, days: tier.days,
+      appliedAt: appliedAt.toISOString(), dueAt: dueDate.toISOString(),
+      status: "active"
+    });
+
+    const msg = [
+      "SILOH LOANS — LOAN APPLICATION",
+      "",
+      "Name: " + name,
+      "Number: " + phone,
+      "ID: " + id,
+      "Amount: " + fmt(amt),
+      "Amount Repay: " + fmt(total),
+      "Date to Repay: " + dueDateStr,
+      "SL: " + ref,
+      "",
+      "M-Pesa (disbursement): " + mpesa,
+      "Pay via M-Pesa Till: " + TILL_NUMBER + " or Airtel Money: " + AIRTEL_NUMBER
+    ].join("\n");
+
+    const url = "https://wa.me/" + ADMIN_WHATSAPP + "?text=" + encodeURIComponent(msg);
+    window.open(url, "_blank");
+  }
+
+  function getLoans(){ return JSON.parse(localStorage.getItem("siloh_loans") || "[]"); }
+  function saveLoanRecord(record){
+    const loans = getLoans();
+    loans.push(record);
+    localStorage.setItem("siloh_loans", JSON.stringify(loans));
+  }
+  function normalize(v){ return (v||"").toString().trim().toLowerCase().replace(/\s+/g,""); }
+  function findActiveLoan(phone, id){
+    const loans = getLoans();
+    const p = normalize(phone), i = normalize(id);
+    return loans.slice().reverse().find(l =>
+      l.status === "active" && (normalize(l.phone) === p || (i && normalize(l.id) === i))
+    );
+  }
+  function findAnyLoan(query){
+    const loans = getLoans();
+    const q = normalize(query);
+    return loans.slice().reverse().find(l => normalize(l.phone) === q || normalize(l.id) === q);
+  }
+
+  function saveKnownNumber(num){
+    if(!num) return;
+    let list = JSON.parse(localStorage.getItem("siloh_known_numbers") || "[]");
+    if(!list.includes(num)) list.push(num);
+    localStorage.setItem("siloh_known_numbers", JSON.stringify(list));
+  }
+
+  function populatePayerNumbers(){
+    const select = document.getElementById("payerNumberSelect");
+    const list = JSON.parse(localStorage.getItem("siloh_known_numbers") || "[]");
+    select.innerHTML = "";
+    if(list.length === 0){
+      select.innerHTML = '<option value="">No saved numbers yet — type yours below</option>';
+      return;
+    }
+    select.innerHTML = '<option value="">Select a number…</option>' +
+      list.map(n => '<option value="'+n+'">'+n+'</option>').join("") +
+      '<option value="__other">Use a different number</option>';
+    const lastName = localStorage.getItem("siloh_last_name");
+    if(lastName && !document.getElementById("payerName").value){
+      document.getElementById("payerName").value = lastName;
+    }
+  }
+
+  function onPayerNumberChange(){
+    const select = document.getElementById("payerNumberSelect");
+    const customField = document.getElementById("payerNumberCustom");
+    if(select.value === "__other" || select.value === ""){
+      customField.style.display = "block";
+      if(select.value === "__other") customField.focus();
+    } else {
+      customField.value = select.value;
+      customField.style.display = "block";
+    }
+  }
+
+  function syncCustomNumber(){
+    document.getElementById("payerNumberSelect").value = "__other";
+  }
+
+  function getPayerNumber(){
+    const custom = document.getElementById("payerNumberCustom").value.trim();
+    if(custom) return custom;
+    const select = document.getElementById("payerNumberSelect").value;
+    return (select && select !== "__other") ? select : "Not provided";
+  }
+
+  function onLookupInput(){
+    const q = document.getElementById("payLookup").value.trim();
+    const customField = document.getElementById("payerNumberCustom");
+    if(/^0?7\d{8}$/.test(q.replace(/\s/g,"")) && !customField.value){
+      customField.value = q;
+      document.getElementById("payerNumberSelect").value = "__other";
+    }
+  }
+
+  let currentLoanRef = null;
+
+  function checkStatus(){
+    const q = document.getElementById("payLookup").value.trim();
+    if(!q){ alert("Enter the phone or ID you applied with."); return; }
+
+    const loan = findAnyLoan(q);
+    const statusCard = document.getElementById("statusCard");
+    const noLoanCard = document.getElementById("noLoanCard");
+
+    if(!loan){
+      statusCard.style.display = "none";
+      noLoanCard.style.display = "block";
+      noLoanCard.scrollIntoView({behavior:"smooth", block:"nearest"});
+      currentLoanRef = null;
+      return;
+    }
+
+    noLoanCard.style.display = "none";
+    renderLoanStatus(loan);
+    statusCard.style.display = "block";
+    statusCard.scrollIntoView({behavior:"smooth", block:"nearest"});
+  }
+
+  function renderLoanStatus(loan){
+    currentLoanRef = loan.ref;
+    const amount = loan.amount;
+    const interest = amount * INTEREST_RATE;
+    const dueAt = new Date(loan.dueAt);
+    const today = new Date();
+    const msPerDay = 86400000;
+    const daysLate = loan.status === "paid" ? 0 : Math.max(0, Math.floor((today - dueAt) / msPerDay));
+    const lateFee = daysLate * amount * LATE_FEE_RATE_PER_DAY;
+    const total = amount + interest + lateFee;
+
+    document.getElementById("stRef").textContent = loan.ref;
+
+    const tag = document.getElementById("stTag");
+    if(loan.status === "paid"){
+      tag.className = "status-tag paid";
+      tag.textContent = "Paid";
+    } else if(daysLate > 0){
+      tag.className = "status-tag late";
+      tag.textContent = daysLate + " day" + (daysLate === 1 ? "" : "s") + " late";
+    } else {
+      const daysLeft = Math.max(0, Math.ceil((dueAt - today) / msPerDay));
+      tag.className = "status-tag ontrack";
+      tag.textContent = daysLeft + " day" + (daysLeft === 1 ? "" : "s") + " left";
+    }
+
+    document.getElementById("segPrincipal").style.flex = amount;
+    document.getElementById("segInterest").style.flex = interest;
+    document.getElementById("legPrincipal").textContent = "Principal · " + fmt(amount);
+    document.getElementById("legInterest").textContent = "Interest · " + fmt(interest);
+
+    const segLate = document.getElementById("segLate");
+    const legLateWrap = document.getElementById("legLateWrap");
+    const dayCounter = document.getElementById("dayCounter");
+    if(lateFee > 0){
+      segLate.style.display = "flex";
+      segLate.style.flex = lateFee;
+      legLateWrap.style.display = "flex";
+      document.getElementById("legLate").textContent = "Late fee · " + fmt(lateFee);
+      dayCounter.style.display = "block";
+      dayCounter.textContent = "Growing by " + fmt(amount * LATE_FEE_RATE_PER_DAY) + "/day while unpaid — pay today to stop it.";
+    } else {
+      segLate.style.display = "none";
+      legLateWrap.style.display = "none";
+      dayCounter.style.display = "none";
+    }
+
+    document.getElementById("stTotal").textContent = loan.status === "paid" ? fmt(0) : fmt(total);
+    document.getElementById("paidBtn").style.display = loan.status === "paid" ? "none" : "block";
+  }
+
+  function confirmPayment(){
+    const payerName = document.getElementById("payerName").value.trim() || "Not provided";
+    const payerNumber = getPayerNumber();
+    const ref = document.getElementById("stRef").textContent;
+
+    const msg = [
+      "SILOH LOANS — PAYMENT CONFIRMATION",
+      "",
+      "Ref: " + ref,
+      "Name on payment: " + payerName,
+      "Paid from number: " + payerNumber,
+      "Paid via M-Pesa Till: " + TILL_NUMBER + " or Airtel Money: " + AIRTEL_NUMBER,
+      "",
+      "Please confirm receipt."
+    ].join("\n");
+    const url = "https://wa.me/" + ADMIN_WHATSAPP + "?text=" + encodeURIComponent(msg);
+    window.open(url, "_blank");
+
+    if(currentLoanRef){
+      const loans = getLoans();
+      const idx = loans.findIndex(l => l.ref === currentLoanRef);
+      if(idx > -1){
+        loans[idx].status = "paid";
+        localStorage.setItem("siloh_loans", JSON.stringify(loans));
+        renderLoanStatus(loans[idx]);
+      }
+    }
+  }
+
+  function openHelpWhatsapp(){
+    const msg = "Hello SILOH LOANS, I have a question.";
+    const url = "https://wa.me/" + ADMIN_WHATSAPP + "?text=" + encodeURIComponent(msg);
+    window.open(url, "_blank");
+  }
+
+  updateCalc();
+  populatePayerNumbers();
+</script>
+</body>
+</html>
